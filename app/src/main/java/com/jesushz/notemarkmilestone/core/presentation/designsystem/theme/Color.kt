@@ -1,4 +1,4 @@
-package com.jesushz.notemarkmilestone.core.designsystem.theme
+package com.jesushz.notemarkmilestone.core.presentation.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

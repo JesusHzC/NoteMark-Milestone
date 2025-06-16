@@ -8,7 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.jesushz.notemarkmilestone.app.navigation.NavigationRoot
-import com.jesushz.notemarkmilestone.core.designsystem.theme.NoteMarkMilestoneTheme
+import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

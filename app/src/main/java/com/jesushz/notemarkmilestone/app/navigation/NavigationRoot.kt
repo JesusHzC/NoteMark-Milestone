@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.jesushz.notemarkmilestone.auth.presentation.intro.IntroScreenRoot
 
 @Composable
 fun NavigationRoot(
@@ -26,7 +27,10 @@ private fun NavGraphBuilder.authGraph(
         startDestination = NavigationRoute.IntroScreen
     ) {
         composable<NavigationRoute.IntroScreen> {
-
+            IntroScreenRoot(
+                navigateToGetStarted = {},
+                navigateToLogin = {}
+            )
         }
     }
 }
