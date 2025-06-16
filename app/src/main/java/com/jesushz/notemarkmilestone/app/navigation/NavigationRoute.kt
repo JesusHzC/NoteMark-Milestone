@@ -11,7 +11,9 @@ sealed interface NavigationRoute {
     // Screens Auth
     @Serializable
     data object IntroScreen: NavigationRoute
+    @Serializable
     data object LoginScreen: NavigationRoute
+    @Serializable
     data object RegisterScreen: NavigationRoute
 
 }

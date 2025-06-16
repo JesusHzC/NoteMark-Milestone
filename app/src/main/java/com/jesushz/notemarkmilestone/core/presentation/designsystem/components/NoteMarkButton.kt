@@ -13,15 +13,19 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun NoteMarkButton(
     modifier: Modifier = Modifier,
+    isEnable: Boolean = true,
     onButtonClick: () -> Unit,
     content: @Composable (RowScope.() -> Unit)
 ) {
     Button(
         modifier = modifier,
+        enabled = isEnable,
         onClick = onButtonClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         ),
         shape = RoundedCornerShape(12.dp),
         contentPadding = PaddingValues(12.dp),
