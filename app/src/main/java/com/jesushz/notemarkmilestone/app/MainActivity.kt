@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.jesushz.notemarkmilestone.app.navigation.NavigationRoot
 import com.jesushz.notemarkmilestone.core.designsystem.theme.NoteMarkMilestoneTheme
@@ -12,6 +13,7 @@ import com.jesushz.notemarkmilestone.core.designsystem.theme.NoteMarkMilestoneTh
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(
                 scrim = android.graphics.Color.TRANSPARENT
