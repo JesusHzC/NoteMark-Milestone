@@ -18,9 +18,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jesushz.notemarkmilestone.R
-import com.jesushz.notemarkmilestone.auth.presentation.login.components.ContentLandscape
-import com.jesushz.notemarkmilestone.auth.presentation.login.components.ContentPortrait
-import com.jesushz.notemarkmilestone.auth.presentation.login.components.ContentTablet
+import com.jesushz.notemarkmilestone.auth.presentation.login.components.LoginContentLandscape
+import com.jesushz.notemarkmilestone.auth.presentation.login.components.LoginContentPortrait
+import com.jesushz.notemarkmilestone.auth.presentation.login.components.LoginContentTablet
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
 import com.jesushz.notemarkmilestone.core.presentation.ui.ObserveAsEvents
@@ -103,7 +103,7 @@ private fun LoginScreen(
         ) {
             when {
                 deviceInfo.isTablet -> {
-                    ContentTablet(
+                    LoginContentTablet(
                         state = state,
                         onAction = onAction,
                         modifier = Modifier
@@ -115,7 +115,7 @@ private fun LoginScreen(
                     )
                 }
                 deviceInfo.isLandscape -> {
-                    ContentLandscape(
+                    LoginContentLandscape(
                         state = state,
                         onAction = onAction,
                         modifier = Modifier
@@ -129,7 +129,7 @@ private fun LoginScreen(
                     )
                 }
                 else -> {
-                    ContentPortrait(
+                    LoginContentPortrait(
                         state = state,
                         onAction = onAction,
                         modifier = Modifier

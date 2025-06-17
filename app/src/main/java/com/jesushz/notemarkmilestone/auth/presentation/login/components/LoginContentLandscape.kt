@@ -25,7 +25,7 @@ import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.N
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.NoteMarkTextField
 
 @Composable
-internal fun ContentLandscape(
+internal fun LoginContentLandscape(
     modifier: Modifier = Modifier,
     state: LoginState,
     onAction: (LoginAction) -> Unit

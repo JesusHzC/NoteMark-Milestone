@@ -3,9 +3,9 @@ package com.jesushz.notemarkmilestone.auth.presentation.intro
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.jesushz.notemarkmilestone.auth.presentation.intro.components.ContentLandscape
-import com.jesushz.notemarkmilestone.auth.presentation.intro.components.ContentPortrait
-import com.jesushz.notemarkmilestone.auth.presentation.intro.components.ContentTablet
+import com.jesushz.notemarkmilestone.auth.presentation.intro.components.IntroContentLandscape
+import com.jesushz.notemarkmilestone.auth.presentation.intro.components.IntroContentPortrait
+import com.jesushz.notemarkmilestone.auth.presentation.intro.components.IntroContentTablet
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
 import com.jesushz.notemarkmilestone.core.presentation.ui.rememberDeviceInfo
@@ -33,7 +33,7 @@ private fun IntroScreen(
 
     when {
         deviceInfo.isTablet -> {
-            ContentTablet(
+            IntroContentTablet(
                 modifier = Modifier
                     .fillMaxSize(),
                 onGetStartedClick = {
@@ -45,7 +45,7 @@ private fun IntroScreen(
             )
         }
         deviceInfo.isLandscape -> {
-            ContentLandscape(
+            IntroContentLandscape(
                 modifier = Modifier
                     .fillMaxSize(),
                 onGetStartedClick = {
@@ -57,7 +57,7 @@ private fun IntroScreen(
             )
         }
         else -> {
-            ContentPortrait(
+            IntroContentPortrait(
                 modifier = Modifier
                     .fillMaxSize(),
                 onGetStartedClick = {

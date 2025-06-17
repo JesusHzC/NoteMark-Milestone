@@ -23,7 +23,7 @@ import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.N
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.NoteMarkTextField
 
 @Composable
-internal fun ContentTablet(
+internal fun LoginContentTablet(
     modifier: Modifier = Modifier,
     state: LoginState,
     onAction: (LoginAction) -> Unit

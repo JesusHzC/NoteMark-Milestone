@@ -26,7 +26,7 @@ import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.N
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.NoteMarkButtonOutlined
 
 @Composable
-internal fun ContentPortrait(
+internal fun IntroContentPortrait(
     modifier: Modifier = Modifier,
     onGetStartedClick: () -> Unit,
     onLoginClick: () -> Unit
