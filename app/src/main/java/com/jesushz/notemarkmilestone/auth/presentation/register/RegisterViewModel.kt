@@ -79,8 +79,9 @@ class RegisterViewModel(
                                 UiText.StringResource(R.string.error_email_or_username_exists)
                             )
                         )
+                    } else {
+                        _eventUi.send(RegisterEvent.OnError(result.error.asUiText()))
                     }
-                    _eventUi.send(RegisterEvent.OnError(result.error.asUiText()))
                 }
                 is Result.Success -> {
                     setIsLoading(false)
