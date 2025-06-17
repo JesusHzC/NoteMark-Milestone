@@ -2,9 +2,12 @@ package com.jesushz.notemarkmilestone.auth.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jesushz.notemarkmilestone.R
 import com.jesushz.notemarkmilestone.auth.domain.UserDataValidator
 import com.jesushz.notemarkmilestone.auth.domain.repository.AuthRepository
+import com.jesushz.notemarkmilestone.core.domain.networking.DataError
 import com.jesushz.notemarkmilestone.core.domain.networking.Result
+import com.jesushz.notemarkmilestone.core.presentation.ui.UiText
 import com.jesushz.notemarkmilestone.core.presentation.ui.asUiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,6 +73,13 @@ class RegisterViewModel(
             when (result) {
                 is Result.Error -> {
                     setIsLoading(false)
+                    if (result.error == DataError.Network.CONFLICT) {
+                        _eventUi.send(
+                            RegisterEvent.OnError(
+                                UiText.StringResource(R.string.error_email_or_username_exists)
+                            )
+                        )
+                    }
                     _eventUi.send(RegisterEvent.OnError(result.error.asUiText()))
                 }
                 is Result.Success -> {
