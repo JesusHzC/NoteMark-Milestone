@@ -23,15 +23,18 @@ android {
 
     buildTypes {
         val baseUrl = gradleLocalProperties(rootDir, rootProject.providers).getProperty("BASE_URL")
+        val apiKey = gradleLocalProperties(rootDir, rootProject.providers).getProperty("API_KEY")
         debug {
             isMinifyEnabled = false
             buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
+            buildConfigField("String", "API_KEY",  "\"$apiKey\"")
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             isDebuggable = false
             buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
+            buildConfigField("String", "API_KEY",  "\"$apiKey\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -69,6 +72,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.androidx.security.crypto.ktx)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.core)
@@ -79,6 +83,7 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.auth)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.timber)
     implementation(libs.splash.screen)

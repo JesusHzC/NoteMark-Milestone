@@ -2,34 +2,27 @@ package com.jesushz.notemarkmilestone.auth.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jesushz.notemarkmilestone.R
 import com.jesushz.notemarkmilestone.auth.domain.UserDataValidator
+import com.jesushz.notemarkmilestone.auth.domain.repository.AuthRepository
+import com.jesushz.notemarkmilestone.core.domain.networking.DataError
+import com.jesushz.notemarkmilestone.core.domain.networking.Result
+import com.jesushz.notemarkmilestone.core.presentation.ui.UiText
+import com.jesushz.notemarkmilestone.core.presentation.ui.asUiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val userDataValidator: UserDataValidator
+    private val userDataValidator: UserDataValidator,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private var hasLoadedInitialData = false
-
     private val _state = MutableStateFlow(LoginState())
-    val state = _state
-        .onStart {
-            if (!hasLoadedInitialData) {
-                /** Load initial data here **/
-                hasLoadedInitialData = true
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = LoginState()
-        )
+    val state = _state.asStateFlow()
 
     private val _eventUi = Channel<LoginEvent>()
     val eventUi = _eventUi.receiveAsFlow()
@@ -37,6 +30,7 @@ class LoginViewModel(
     fun onAction(action: LoginAction) {
         when (action) {
             LoginAction.OnLogInClick -> {
+                login()
             }
             LoginAction.OnTogglePasswordVisibility -> {
                 _state.update {
@@ -54,6 +48,46 @@ class LoginViewModel(
                 }
             }
             else -> Unit
+        }
+    }
+
+    private fun login() {
+        viewModelScope.launch {
+            val email = state.value.email.text.toString().trim()
+            val password = state.value.password.text.toString()
+
+            setIsLoading(true)
+            val result = authRepository.login(email, password)
+            when (result) {
+                is Result.Error -> {
+                    setIsLoading(false)
+                    if (result.error == DataError.Network.UNAUTHORIZED) {
+                        _eventUi.send(
+                            LoginEvent.OnError(
+                                UiText.StringResource(R.string.error_email_password_incorrect)
+                            )
+                        )
+                    } else {
+                        _eventUi.send(
+                            LoginEvent.OnError(
+                                result.error.asUiText()
+                            )
+                        )
+                    }
+                }
+                is Result.Success -> {
+                    setIsLoading(false)
+                    _eventUi.send(LoginEvent.LoginSuccess)
+                }
+            }
+        }
+    }
+
+    private fun setIsLoading(isLoading: Boolean) {
+        _state.update {
+            it.copy(
+                isLoading = isLoading
+            )
         }
     }
 

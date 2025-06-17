@@ -7,4 +7,5 @@ data class LoginState(
     val password: TextFieldState = TextFieldState(),
     val loginIsEnable: Boolean = false,
     val showPassword: Boolean = false,
+    val isLoading: Boolean = false
 )

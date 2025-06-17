@@ -37,7 +37,15 @@ private fun NavGraphBuilder.authGraph(
         }
 
         composable<NavigationRoute.LoginScreen> {
-            LoginScreenRoot()
+            LoginScreenRoot(
+                onNavigateToRegister = {
+                    navController.navigate(NavigationRoute.RegisterScreen)
+                }
+            )
+        }
+
+        composable<NavigationRoute.RegisterScreen> {
+
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.jesushz.notemarkmilestone.auth.presentation.login
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -12,13 +13,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jesushz.notemarkmilestone.R
 import com.jesushz.notemarkmilestone.auth.presentation.login.components.ContentLandscape
 import com.jesushz.notemarkmilestone.auth.presentation.login.components.ContentPortrait
 import com.jesushz.notemarkmilestone.auth.presentation.login.components.ContentTablet
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
+import com.jesushz.notemarkmilestone.core.presentation.ui.ObserveAsEvents
 import com.jesushz.notemarkmilestone.core.presentation.ui.rememberDeviceInfo
 import org.koin.androidx.compose.koinViewModel
 
@@ -27,15 +32,40 @@ fun LoginScreenRoot(
     viewModel: LoginViewModel = koinViewModel(),
     onNavigateToRegister: () -> Unit
 ) {
+    val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveAsEvents(
+        flow = viewModel.eventUi
+    ) { event ->
+        when (event) {
+            LoginEvent.LoginSuccess -> {
+                Toast.makeText(
+                    context,
+                    R.string.youre_logged_in,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            is LoginEvent.OnError -> {
+                Toast.makeText(
+                    context,
+                    event.error.asString(context),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
 
     LoginScreen(
         state = state,
         onAction = { action ->
             when (action) {
                 LoginAction.OnRegisterClick -> onNavigateToRegister()
-                else -> viewModel.onAction(action)
+                LoginAction.OnLogInClick -> keyboardController?.hide()
+                else -> Unit
             }
+            viewModel.onAction(action)
         }
     )
 }

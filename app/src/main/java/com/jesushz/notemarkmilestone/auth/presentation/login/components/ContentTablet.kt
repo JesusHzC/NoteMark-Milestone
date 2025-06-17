@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jesushz.notemarkmilestone.R
@@ -71,10 +74,21 @@ internal fun ContentTablet(
                 onAction(LoginAction.OnLogInClick)
             }
         ) {
-            Text(
-                text = stringResource(R.string.log_in),
-                style = MaterialTheme.typography.titleSmall
-            )
+            when {
+                state.isLoading -> {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+                else -> {
+                    Text(
+                        text = stringResource(R.string.log_in),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
+            }
         }
         Spacer(modifier = Modifier.height(12.dp))
         TextButton(
