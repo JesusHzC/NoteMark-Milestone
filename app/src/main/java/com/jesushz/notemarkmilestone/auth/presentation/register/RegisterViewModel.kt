@@ -44,12 +44,14 @@ class RegisterViewModel(
                 }
             }
             is RegisterAction.OnValidateCredentials -> {
+                val isValidEmail = userDataValidator.isValidEmail(action.email)
+                val isValidPassword = userDataValidator.validatePassword(action.password).isValidPassword
+                val isValidConfirmPassword = userDataValidator.validatePassword(action.confirmPassword).isValidPassword
+                val isValidUsername = userDataValidator.validateUsername(action.username)
+                val passwordMatch = action.password == action.confirmPassword
                 _state.update {
                     it.copy(
-                        registerIsEnable = userDataValidator.isValidEmail(action.username) &&
-                            userDataValidator.validatePassword(action.password).isValidPassword &&
-                            action.confirmPassword == action.password &&
-                            userDataValidator.validateUsername(action.username)
+                        registerIsEnable = isValidEmail and isValidPassword and isValidConfirmPassword and isValidUsername and passwordMatch
                     )
                 }
             }
