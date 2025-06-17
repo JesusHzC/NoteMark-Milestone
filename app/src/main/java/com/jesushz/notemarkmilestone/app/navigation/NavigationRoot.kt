@@ -29,7 +29,9 @@ private fun NavGraphBuilder.authGraph(
     ) {
         composable<NavigationRoute.IntroScreen> {
             IntroScreenRoot(
-                navigateToGetStarted = {},
+                navigateToRegister = {
+                    navController.navigate(NavigationRoute.RegisterScreen)
+                },
                 navigateToLogin = {
                     navController.navigate(NavigationRoute.LoginScreen)
                 }

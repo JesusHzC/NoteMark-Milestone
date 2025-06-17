@@ -12,13 +12,13 @@ import com.jesushz.notemarkmilestone.core.presentation.ui.rememberDeviceInfo
 
 @Composable
 fun IntroScreenRoot(
-    navigateToGetStarted: () -> Unit,
+    navigateToRegister: () -> Unit,
     navigateToLogin: () -> Unit
 ) {
     IntroScreen(
         onAction = { action ->
             when (action) {
-                IntroAction.OnGetStarted -> navigateToGetStarted()
+                IntroAction.OnGetStarted -> navigateToRegister()
                 IntroAction.OnLogIn -> navigateToLogin()
             }
         }
