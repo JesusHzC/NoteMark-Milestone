@@ -6,6 +6,7 @@ import com.jesushz.notemarkmilestone.auth.domain.PatternValidator
 import com.jesushz.notemarkmilestone.auth.domain.UserDataValidator
 import com.jesushz.notemarkmilestone.auth.domain.repository.AuthRepository
 import com.jesushz.notemarkmilestone.auth.presentation.login.LoginViewModel
+import com.jesushz.notemarkmilestone.auth.presentation.register.RegisterViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -19,4 +20,5 @@ val authModule = module {
     singleOf(::AuthRepositoryImpl).bind<AuthRepository>()
 
     viewModelOf(::LoginViewModel)
+    viewModelOf(::RegisterViewModel)
 }

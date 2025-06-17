@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.jesushz.notemarkmilestone.auth.presentation.intro.IntroScreenRoot
 import com.jesushz.notemarkmilestone.auth.presentation.login.LoginScreenRoot
+import com.jesushz.notemarkmilestone.auth.presentation.register.RegisterScreenRoot
 
 @Composable
 fun NavigationRoot(
@@ -47,7 +48,11 @@ private fun NavGraphBuilder.authGraph(
         }
 
         composable<NavigationRoute.RegisterScreen> {
-
+            RegisterScreenRoot(
+                navigateToLogin = {
+                    navController.navigate(NavigationRoute.LoginScreen)
+                }
+            )
         }
     }
 }

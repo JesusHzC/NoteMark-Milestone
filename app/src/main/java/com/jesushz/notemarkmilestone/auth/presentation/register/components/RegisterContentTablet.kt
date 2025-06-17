@@ -1,4 +1,4 @@
-package com.jesushz.notemarkmilestone.auth.presentation.login.components
+package com.jesushz.notemarkmilestone.auth.presentation.register.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,32 +17,44 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.jesushz.notemarkmilestone.R
-import com.jesushz.notemarkmilestone.auth.presentation.login.LoginAction
-import com.jesushz.notemarkmilestone.auth.presentation.login.LoginState
+import com.jesushz.notemarkmilestone.auth.presentation.register.RegisterAction
+import com.jesushz.notemarkmilestone.auth.presentation.register.RegisterState
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.NoteMarkButton
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.NoteMarkPasswordTextField
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.NoteMarkTextField
 
 @Composable
-internal fun LoginContentPortrait(
+internal fun RegisterContentTablet(
     modifier: Modifier = Modifier,
-    state: LoginState,
-    onAction: (LoginAction) -> Unit
+    state: RegisterState,
+    onAction: (RegisterAction) -> Unit
 ) {
     Column(
         modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(R.string.log_in),
+            text = stringResource(R.string.create_account),
             style = MaterialTheme.typography.titleMedium
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
-            text = stringResource(R.string.log_in_description),
+            text = stringResource(R.string.register_description),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(40.dp))
+        NoteMarkTextField(
+            state = state.username,
+            hint = stringResource(R.string.username_hint),
+            title = stringResource(R.string.username),
+            startIcon = null,
+            endIcon = null,
+            error = null,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         NoteMarkTextField(
             state = state.email,
             hint = stringResource(R.string.email_hint),
@@ -59,9 +71,21 @@ internal fun LoginContentPortrait(
             hint = stringResource(R.string.password),
             title = stringResource(R.string.password),
             isPasswordVisible = state.showPassword,
+            onTogglePasswordVisibility = {
+                onAction(RegisterAction.OnTogglePasswordVisibility)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        NoteMarkPasswordTextField(
+            state = state.confirmPassword,
+            hint = stringResource(R.string.password),
+            title = stringResource(R.string.repeat_password),
+            isPasswordVisible = state.showConfirmPassword,
             imeAction = ImeAction.Done,
             onTogglePasswordVisibility = {
-                onAction(LoginAction.OnTogglePasswordVisibility)
+                onAction(RegisterAction.OnToggleConfirmPasswordVisibility)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -70,9 +94,9 @@ internal fun LoginContentPortrait(
         NoteMarkButton(
             modifier = Modifier
                 .fillMaxWidth(),
-            isEnable = state.loginIsEnable,
+            isEnable = state.registerIsEnable,
             onButtonClick = {
-                onAction(LoginAction.OnLogInClick)
+                onAction(RegisterAction.OnRegisterClick)
             }
         ) {
             when {
@@ -94,7 +118,7 @@ internal fun LoginContentPortrait(
         Spacer(modifier = Modifier.height(12.dp))
         TextButton(
             onClick = {
-                onAction(LoginAction.OnRegisterClick)
+                onAction(RegisterAction.OnLoginClick)
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)

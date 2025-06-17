@@ -4,5 +4,6 @@ object Constants {
 
     // Endpoints
     const val ENDPOINT_LOGIN = "/api/auth/login"
+    const val ENDPOINT_REGISTER = "/api/auth/register"
 
 }

@@ -31,6 +31,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -44,6 +45,7 @@ fun NoteMarkTextField(
     title: String?,
     error: String?,
     keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction: ImeAction = ImeAction.Next,
     additionalInfo: String? = null
 ) {
     var isFocused by remember {
@@ -84,7 +86,8 @@ fun NoteMarkTextField(
         BasicTextField(
             state = state,
             keyboardOptions = KeyboardOptions(
-                keyboardType = keyboardType
+                keyboardType = keyboardType,
+                imeAction = imeAction
             ),
             textStyle = MaterialTheme.typography.bodyLarge,
             lineLimits = TextFieldLineLimits.SingleLine,

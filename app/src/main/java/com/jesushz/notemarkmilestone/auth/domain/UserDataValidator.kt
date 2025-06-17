@@ -22,7 +22,13 @@ class UserDataValidator(
         )
     }
 
+    fun validateUsername(username: String): Boolean {
+        return username.length in MIN_USERNAME_LENGTH..MAX_USERNAME_LENGTH
+    }
+
     companion object {
         const val MIN_PASSWORD_LENGTH = 8
+        const val MIN_USERNAME_LENGTH = 3
+        const val MAX_USERNAME_LENGTH = 20
     }
 }

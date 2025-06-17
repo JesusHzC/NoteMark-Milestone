@@ -2,8 +2,8 @@ package com.jesushz.notemarkmilestone.auth.data.repository
 
 import com.jesushz.notemarkmilestone.auth.data.model.LoginRequest
 import com.jesushz.notemarkmilestone.auth.data.model.LoginResponse
+import com.jesushz.notemarkmilestone.auth.data.model.RegisterRequest
 import com.jesushz.notemarkmilestone.auth.domain.repository.AuthRepository
-import com.jesushz.notemarkmilestone.core.data.networking.get
 import com.jesushz.notemarkmilestone.core.data.networking.post
 import com.jesushz.notemarkmilestone.core.domain.auth.SessionStorage
 import com.jesushz.notemarkmilestone.core.domain.auth.AuthInfo
@@ -12,6 +12,7 @@ import com.jesushz.notemarkmilestone.core.domain.networking.EmptyDataResult
 import com.jesushz.notemarkmilestone.core.domain.networking.Result
 import com.jesushz.notemarkmilestone.core.domain.networking.asEmptyDataResult
 import com.jesushz.notemarkmilestone.core.util.Constants.ENDPOINT_LOGIN
+import com.jesushz.notemarkmilestone.core.util.Constants.ENDPOINT_REGISTER
 import io.ktor.client.HttpClient
 
 class AuthRepositoryImpl(
@@ -39,6 +40,21 @@ class AuthRepositoryImpl(
             )
         }
         return result.asEmptyDataResult()
+    }
+
+    override suspend fun register(
+        username: String,
+        email: String,
+        password: String
+    ): EmptyDataResult<DataError.Network> {
+        return httpClient.post<RegisterRequest, Unit>(
+            route = ENDPOINT_REGISTER,
+            body = RegisterRequest(
+                username = username,
+                email = email,
+                password = password
+            )
+        )
     }
 
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.jesushz.notemarkmilestone.R
 import com.jesushz.notemarkmilestone.auth.presentation.login.LoginAction
@@ -59,6 +60,7 @@ internal fun LoginContentTablet(
             hint = stringResource(R.string.password),
             title = stringResource(R.string.password),
             isPasswordVisible = state.showPassword,
+            imeAction = ImeAction.Done,
             onTogglePasswordVisibility = {
                 onAction(LoginAction.OnTogglePasswordVisibility)
             },
