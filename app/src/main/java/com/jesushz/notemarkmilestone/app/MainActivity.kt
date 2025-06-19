@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(
                 scrim = android.graphics.Color.TRANSPARENT
-            ),
+            )
         )
         setContent {
             NoteMarkMilestoneTheme {

@@ -35,4 +35,7 @@
     <string name="error_invalid_username">Must be between 3 and 20 characters</string>
     <string name="error_password_mismatch">Passwords don\'t match</string>
     <string name="register">Create account</string>
+    <string name="note_mark">NoteMark</string>
+    <string name="empty_notes">You’ve got an empty board,\nlet’s place your first note on it!</string>
+    <string name="add_note">Add note</string>
 </resources>

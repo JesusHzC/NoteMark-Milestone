@@ -9,6 +9,7 @@ import androidx.navigation.navigation
 import com.jesushz.notemarkmilestone.auth.presentation.intro.IntroScreenRoot
 import com.jesushz.notemarkmilestone.auth.presentation.login.LoginScreenRoot
 import com.jesushz.notemarkmilestone.auth.presentation.register.RegisterScreenRoot
+import com.jesushz.notemarkmilestone.note.presentation.note_list.NoteListScreenRoot
 
 @Composable
 fun NavigationRoot(
@@ -88,7 +89,7 @@ private fun NavGraphBuilder.noteGraph(
         startDestination = NavigationRoute.NoteList
     ) {
         composable<NavigationRoute.NoteList> {
-
+            NoteListScreenRoot()
         }
     }
 }
