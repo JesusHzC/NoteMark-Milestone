@@ -24,7 +24,8 @@ import com.jesushz.notemarkmilestone.auth.presentation.register.components.Regis
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
 import com.jesushz.notemarkmilestone.core.presentation.ui.ObserveAsEvents
-import com.jesushz.notemarkmilestone.core.presentation.ui.rememberDeviceInfo
+import com.jesushz.notemarkmilestone.core.util.isLandscape
+import com.jesushz.notemarkmilestone.core.util.isTablet
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -76,7 +77,6 @@ private fun RegisterScreen(
     state: RegisterState,
     onAction: (RegisterAction) -> Unit,
 ) {
-    val deviceInfo = rememberDeviceInfo()
     LaunchedEffect(state.username.text, state.email.text, state.password.text, state.confirmPassword.text) {
         onAction(
             RegisterAction.OnValidateCredentials(
@@ -105,7 +105,7 @@ private fun RegisterScreen(
             )
         ) {
             when {
-                deviceInfo.isTablet -> {
+                isTablet() -> {
                     RegisterContentTablet(
                         state = state,
                         onAction = onAction,
@@ -117,7 +117,7 @@ private fun RegisterScreen(
                             )
                     )
                 }
-                deviceInfo.isLandscape -> {
+                isLandscape() -> {
                     RegisterContentLandscape(
                         state = state,
                         onAction = onAction,

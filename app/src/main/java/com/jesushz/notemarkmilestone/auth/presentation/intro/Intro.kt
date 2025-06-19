@@ -3,12 +3,11 @@ package com.jesushz.notemarkmilestone.auth.presentation.intro
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.jesushz.notemarkmilestone.auth.presentation.intro.components.IntroContentLandscape
-import com.jesushz.notemarkmilestone.auth.presentation.intro.components.IntroContentPortrait
+import com.jesushz.notemarkmilestone.auth.presentation.intro.components.IntroContentPhone
 import com.jesushz.notemarkmilestone.auth.presentation.intro.components.IntroContentTablet
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
-import com.jesushz.notemarkmilestone.core.presentation.ui.rememberDeviceInfo
+import com.jesushz.notemarkmilestone.core.util.isTablet
 
 @Composable
 fun IntroScreenRoot(
@@ -29,10 +28,8 @@ fun IntroScreenRoot(
 private fun IntroScreen(
     onAction: (IntroAction) -> Unit,
 ) {
-    val deviceInfo = rememberDeviceInfo()
-
     when {
-        deviceInfo.isTablet -> {
+        isTablet() -> {
             IntroContentTablet(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -44,20 +41,8 @@ private fun IntroScreen(
                 }
             )
         }
-        deviceInfo.isLandscape -> {
-            IntroContentLandscape(
-                modifier = Modifier
-                    .fillMaxSize(),
-                onGetStartedClick = {
-                    onAction(IntroAction.OnGetStarted)
-                },
-                onLoginClick = {
-                    onAction(IntroAction.OnLogIn)
-                }
-            )
-        }
         else -> {
-            IntroContentPortrait(
+            IntroContentPhone(
                 modifier = Modifier
                     .fillMaxSize(),
                 onGetStartedClick = {

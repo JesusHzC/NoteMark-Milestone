@@ -24,7 +24,8 @@ import com.jesushz.notemarkmilestone.auth.presentation.login.components.LoginCon
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
 import com.jesushz.notemarkmilestone.core.presentation.ui.ObserveAsEvents
-import com.jesushz.notemarkmilestone.core.presentation.ui.rememberDeviceInfo
+import com.jesushz.notemarkmilestone.core.util.isLandscape
+import com.jesushz.notemarkmilestone.core.util.isTablet
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -75,7 +76,6 @@ private fun LoginScreen(
     state: LoginState,
     onAction: (LoginAction) -> Unit,
 ) {
-    val deviceInfo = rememberDeviceInfo()
     LaunchedEffect(state.email.text, state.password.text) {
         onAction(
             LoginAction.OnValidateCredentials(
@@ -102,7 +102,7 @@ private fun LoginScreen(
             )
         ) {
             when {
-                deviceInfo.isTablet -> {
+                isTablet() -> {
                     LoginContentTablet(
                         state = state,
                         onAction = onAction,
@@ -114,7 +114,7 @@ private fun LoginScreen(
                             )
                     )
                 }
-                deviceInfo.isLandscape -> {
+                isLandscape() -> {
                     LoginContentLandscape(
                         state = state,
                         onAction = onAction,
