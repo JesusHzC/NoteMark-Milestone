@@ -19,6 +19,7 @@ fun NavigationRoot(
         startDestination = NavigationRoute.AuthGraph,
     ) {
         authGraph(navController)
+        noteGraph(navController)
     }
 }
 
@@ -41,18 +42,52 @@ private fun NavGraphBuilder.authGraph(
 
         composable<NavigationRoute.LoginScreen> {
             LoginScreenRoot(
-                onNavigateToRegister = {
-                    navController.navigate(NavigationRoute.RegisterScreen)
+                onLoginSuccess = {
+                    navController.navigate(NavigationRoute.NoteGraph) {
+                        popUpTo(NavigationRoute.AuthGraph) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onSignUpClick = {
+                    navController.navigate(NavigationRoute.RegisterScreen) {
+                        popUpTo(NavigationRoute.LoginScreen) {
+                            inclusive = true
+                            saveState = true
+                        }
+                        restoreState = true
+                    }
                 }
             )
         }
 
         composable<NavigationRoute.RegisterScreen> {
             RegisterScreenRoot(
-                navigateToLogin = {
+                onSignInClick = {
+                    navController.navigate(NavigationRoute.LoginScreen) {
+                        popUpTo(NavigationRoute.RegisterScreen) {
+                            inclusive = true
+                            saveState = true
+                        }
+                        restoreState = true
+                    }
+                },
+                onSuccessfulRegistration = {
                     navController.navigate(NavigationRoute.LoginScreen)
-                }
+                },
             )
+        }
+    }
+}
+
+private fun NavGraphBuilder.noteGraph(
+    navController: NavHostController
+) {
+    navigation<NavigationRoute.NoteGraph>(
+        startDestination = NavigationRoute.NoteList
+    ) {
+        composable<NavigationRoute.NoteList> {
+
         }
     }
 }

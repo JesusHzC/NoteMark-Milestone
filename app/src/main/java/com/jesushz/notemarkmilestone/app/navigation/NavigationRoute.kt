@@ -7,6 +7,8 @@ sealed interface NavigationRoute {
     // Graphs
     @Serializable
     data object AuthGraph: NavigationRoute
+    @Serializable
+    data object NoteGraph: NavigationRoute
 
     // Screens Auth
     @Serializable
@@ -15,5 +17,9 @@ sealed interface NavigationRoute {
     data object LoginScreen: NavigationRoute
     @Serializable
     data object RegisterScreen: NavigationRoute
+
+    // Screens Note
+    @Serializable
+    data object NoteList: NavigationRoute
 
 }

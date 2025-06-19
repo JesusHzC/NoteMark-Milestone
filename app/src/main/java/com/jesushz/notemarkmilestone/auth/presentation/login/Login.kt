@@ -28,7 +28,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginScreenRoot(
     viewModel: LoginViewModel = koinViewModel(),
-    onNavigateToRegister: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onSignUpClick: () -> Unit
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -44,6 +45,7 @@ fun LoginScreenRoot(
                     R.string.youre_logged_in,
                     Toast.LENGTH_LONG
                 ).show()
+                onLoginSuccess()
             }
             is LoginEvent.OnError -> {
                 Toast.makeText(
@@ -59,7 +61,7 @@ fun LoginScreenRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                LoginAction.OnRegisterClick -> onNavigateToRegister()
+                LoginAction.OnRegisterClick -> onSignUpClick()
                 LoginAction.OnLogInClick -> keyboardController?.hide()
                 else -> Unit
             }

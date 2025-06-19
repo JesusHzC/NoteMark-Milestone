@@ -28,7 +28,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun RegisterScreenRoot(
     viewModel: RegisterViewModel = koinViewModel(),
-    navigateToLogin: () -> Unit
+    onSignInClick: () -> Unit,
+    onSuccessfulRegistration: () -> Unit,
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -51,7 +52,7 @@ fun RegisterScreenRoot(
                     R.string.registration_successful,
                     Toast.LENGTH_LONG
                 ).show()
-                navigateToLogin()
+                onSuccessfulRegistration()
             }
         }
     }
@@ -60,7 +61,7 @@ fun RegisterScreenRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                RegisterAction.OnLoginClick -> navigateToLogin()
+                RegisterAction.OnLoginClick -> onSignInClick()
                 RegisterAction.OnRegisterClick -> keyboardController?.hide()
                 else -> Unit
             }
