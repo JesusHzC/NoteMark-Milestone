@@ -12,11 +12,12 @@ import com.jesushz.notemarkmilestone.auth.presentation.register.RegisterScreenRo
 
 @Composable
 fun NavigationRoot(
-    navController: NavHostController
+    navController: NavHostController,
+    isLoggedIn: Boolean,
 ) {
     NavHost(
         navController = navController,
-        startDestination = NavigationRoute.AuthGraph,
+        startDestination = if (isLoggedIn) NavigationRoute.NoteGraph else NavigationRoute.AuthGraph,
     ) {
         authGraph(navController)
         noteGraph(navController)

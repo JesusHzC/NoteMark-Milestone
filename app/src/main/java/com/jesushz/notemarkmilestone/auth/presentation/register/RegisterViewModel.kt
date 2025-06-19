@@ -9,6 +9,7 @@ import com.jesushz.notemarkmilestone.core.domain.networking.DataError
 import com.jesushz.notemarkmilestone.core.domain.networking.Result
 import com.jesushz.notemarkmilestone.core.presentation.ui.UiText
 import com.jesushz.notemarkmilestone.core.presentation.ui.asUiText
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +27,8 @@ class RegisterViewModel(
 
     private val _eventUi = Channel<RegisterEvent>()
     val eventUi = _eventUi.receiveAsFlow()
+
+    private var registerJob: Job? = null
 
     fun onAction(action: RegisterAction) {
         when (action) {
@@ -119,10 +122,11 @@ class RegisterViewModel(
         }
     }
 
-
-
     private fun register() {
-        viewModelScope.launch {
+        if (registerJob?.isActive == true) return
+
+        registerJob?.cancel()
+        registerJob = viewModelScope.launch {
             val username = state.value.username.text.toString().trim()
             val email = state.value.email.text.toString().trim()
             val password = state.value.password.text.toString()

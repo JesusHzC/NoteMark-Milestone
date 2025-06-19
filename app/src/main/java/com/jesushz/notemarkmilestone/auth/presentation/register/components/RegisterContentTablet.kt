@@ -158,7 +158,7 @@ private fun ContentLandscape(
                     }
                     else -> {
                         Text(
-                            text = stringResource(R.string.log_in),
+                            text = stringResource(R.string.register),
                             style = MaterialTheme.typography.titleSmall
                         )
                     }
@@ -270,7 +270,7 @@ private fun ContentPortrait(
                 }
                 else -> {
                     Text(
-                        text = stringResource(R.string.log_in),
+                        text = stringResource(R.string.register),
                         style = MaterialTheme.typography.titleSmall
                     )
                 }

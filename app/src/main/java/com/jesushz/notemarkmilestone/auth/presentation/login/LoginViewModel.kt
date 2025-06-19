@@ -9,6 +9,7 @@ import com.jesushz.notemarkmilestone.core.domain.networking.DataError
 import com.jesushz.notemarkmilestone.core.domain.networking.Result
 import com.jesushz.notemarkmilestone.core.presentation.ui.UiText
 import com.jesushz.notemarkmilestone.core.presentation.ui.asUiText
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +27,8 @@ class LoginViewModel(
 
     private val _eventUi = Channel<LoginEvent>()
     val eventUi = _eventUi.receiveAsFlow()
+
+    private var loginJob: Job? = null
 
     fun onAction(action: LoginAction) {
         when (action) {
@@ -67,7 +70,10 @@ class LoginViewModel(
     }
 
     private fun login() {
-        viewModelScope.launch {
+        if (loginJob?.isActive == true) return
+
+        loginJob?.cancel()
+        loginJob = viewModelScope.launch {
             val email = state.value.email.text.toString().trim()
             val password = state.value.password.text.toString()
 

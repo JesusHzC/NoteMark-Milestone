@@ -34,4 +34,5 @@
     <string name="error_password_no_uppercase">Must contain an uppercase letter</string>
     <string name="error_invalid_username">Must be between 3 and 20 characters</string>
     <string name="error_password_mismatch">Passwords don\'t match</string>
+    <string name="register">Create account</string>
 </resources>
