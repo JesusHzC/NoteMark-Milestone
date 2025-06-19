@@ -2,7 +2,6 @@ package com.jesushz.notemarkmilestone.auth.presentation.register
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -18,13 +17,11 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jesushz.notemarkmilestone.R
-import com.jesushz.notemarkmilestone.auth.presentation.register.components.RegisterContentLandscape
-import com.jesushz.notemarkmilestone.auth.presentation.register.components.RegisterContentPortrait
+import com.jesushz.notemarkmilestone.auth.presentation.register.components.RegisterContentPhone
 import com.jesushz.notemarkmilestone.auth.presentation.register.components.RegisterContentTablet
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
 import com.jesushz.notemarkmilestone.core.presentation.ui.ObserveAsEvents
-import com.jesushz.notemarkmilestone.core.util.isLandscape
 import com.jesushz.notemarkmilestone.core.util.isTablet
 import org.koin.androidx.compose.koinViewModel
 
@@ -111,36 +108,14 @@ private fun RegisterScreen(
                         onAction = onAction,
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(
-                                vertical = 100.dp,
-                                horizontal = 120.dp
-                            )
-                    )
-                }
-                isLandscape() -> {
-                    RegisterContentLandscape(
-                        state = state,
-                        onAction = onAction,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(
-                                start = 60.dp,
-                                top = 32.dp,
-                                end = 32.dp,
-                                bottom = 32.dp
-                            )
                     )
                 }
                 else -> {
-                    RegisterContentPortrait(
+                    RegisterContentPhone(
                         state = state,
                         onAction = onAction,
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(
-                                horizontal = 16.dp,
-                                vertical = 32.dp
-                            )
                     )
                 }
             }
