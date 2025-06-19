@@ -97,7 +97,7 @@ private fun ContentLandscape(
                 title = stringResource(R.string.username),
                 startIcon = null,
                 endIcon = null,
-                error = null,
+                error = state.errorUsername?.asString(),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -108,7 +108,7 @@ private fun ContentLandscape(
                 title = stringResource(R.string.email),
                 startIcon = null,
                 endIcon = null,
-                error = null,
+                error = state.errorEmail?.asString(),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -121,6 +121,7 @@ private fun ContentLandscape(
                 onTogglePasswordVisibility = {
                     onAction(RegisterAction.OnTogglePasswordVisibility)
                 },
+                error = state.errorPassword?.asString(),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -134,6 +135,7 @@ private fun ContentLandscape(
                 onTogglePasswordVisibility = {
                     onAction(RegisterAction.OnToggleConfirmPasswordVisibility)
                 },
+                error = state.errorConfirmPassword?.asString(),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -207,7 +209,7 @@ private fun ContentPortrait(
             title = stringResource(R.string.username),
             startIcon = null,
             endIcon = null,
-            error = null,
+            error = state.errorUsername?.asString(),
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -218,7 +220,7 @@ private fun ContentPortrait(
             title = stringResource(R.string.email),
             startIcon = null,
             endIcon = null,
-            error = null,
+            error = state.errorEmail?.asString(),
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -231,6 +233,7 @@ private fun ContentPortrait(
             onTogglePasswordVisibility = {
                 onAction(RegisterAction.OnTogglePasswordVisibility)
             },
+            error = state.errorPassword?.asString(),
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -244,6 +247,7 @@ private fun ContentPortrait(
             onTogglePasswordVisibility = {
                 onAction(RegisterAction.OnToggleConfirmPasswordVisibility)
             },
+            error = state.errorConfirmPassword?.asString(),
             modifier = Modifier
                 .fillMaxWidth()
         )

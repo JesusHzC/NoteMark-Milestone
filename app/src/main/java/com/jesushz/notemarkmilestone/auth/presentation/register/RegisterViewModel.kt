@@ -47,20 +47,79 @@ class RegisterViewModel(
                 }
             }
             is RegisterAction.OnValidateCredentials -> {
-                val isValidEmail = userDataValidator.isValidEmail(action.email)
-                val isValidPassword = userDataValidator.validatePassword(action.password).isValidPassword
-                val isValidConfirmPassword = userDataValidator.validatePassword(action.confirmPassword).isValidPassword
-                val isValidUsername = userDataValidator.validateUsername(action.username)
-                val passwordMatch = action.password == action.confirmPassword
-                _state.update {
-                    it.copy(
-                        registerIsEnable = isValidEmail and isValidPassword and isValidConfirmPassword and isValidUsername and passwordMatch
-                    )
-                }
+                validateFields(
+                    username = action.username,
+                    email = action.email,
+                    password = action.password,
+                    confirmPassword = action.confirmPassword
+                )
             }
             else -> Unit
         }
     }
+
+    private fun validateFields(
+        username: String,
+        email: String,
+        password: String,
+        confirmPassword: String
+    ) {
+        val isValidUsername = userDataValidator.validateUsername(username)
+        val isValidEmail = userDataValidator.isValidEmail(email)
+        val passwordValidationState = userDataValidator.validatePassword(password)
+        val passwordMatch = password == confirmPassword
+
+        val errorEmail = if (email.isBlank()) {
+            null
+        } else if (!isValidEmail) {
+            UiText.StringResource(R.string.error_invalid_email)
+        } else null
+
+        val errorUsername = if (username.isBlank()) {
+            null
+        } else if (!isValidUsername) {
+            UiText.StringResource(R.string.error_invalid_username)
+        } else null
+
+        val errorPassword = if (password.isBlank()) {
+            null
+        } else if (!passwordValidationState.isValidPassword) {
+            when {
+                !passwordValidationState.hasMinLength -> UiText.StringResource(R.string.error_password_too_short)
+                !passwordValidationState.hasNumber -> UiText.StringResource(R.string.error_password_no_number)
+                !passwordValidationState.hasLowerCaseCharacter -> UiText.StringResource(R.string.error_password_no_lowercase)
+                !passwordValidationState.hasUpperCaseCharacter -> UiText.StringResource(R.string.error_password_no_uppercase)
+                else -> null
+            }
+        } else null
+
+        val errorConfirmPassword = if (confirmPassword.isBlank()) {
+            null
+        } else if (!passwordMatch) {
+            UiText.StringResource(R.string.error_password_mismatch)
+        } else null
+
+        val isFormValid = email.isNotBlank() &&
+                username.isNotBlank() &&
+                password.isNotBlank() &&
+                confirmPassword.isNotBlank() &&
+                isValidEmail &&
+                isValidUsername &&
+                passwordValidationState.isValidPassword &&
+                passwordMatch
+
+        _state.update {
+            it.copy(
+                errorEmail = errorEmail,
+                errorUsername = errorUsername,
+                errorPassword = errorPassword,
+                errorConfirmPassword = errorConfirmPassword,
+                registerIsEnable = isFormValid
+            )
+        }
+    }
+
+
 
     private fun register() {
         viewModelScope.launch {

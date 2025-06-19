@@ -1,6 +1,7 @@
 package com.jesushz.notemarkmilestone.auth.presentation.register
 
 import androidx.compose.foundation.text.input.TextFieldState
+import com.jesushz.notemarkmilestone.core.presentation.ui.UiText
 
 data class RegisterState(
     val username: TextFieldState = TextFieldState(),
@@ -10,5 +11,9 @@ data class RegisterState(
     val registerIsEnable: Boolean = false,
     val showPassword: Boolean = false,
     val showConfirmPassword: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val errorUsername: UiText? = null,
+    val errorEmail: UiText? = null,
+    val errorPassword: UiText? = null,
+    val errorConfirmPassword: UiText? = null
 )

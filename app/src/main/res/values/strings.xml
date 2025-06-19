@@ -27,4 +27,11 @@
     <string name="repeat_password">Repeat password</string>
     <string name="registration_successful">Registration successful! You can log in now.</string>
     <string name="error_email_or_username_exists">A user with that email or username already exists.</string>
+    <string name="error_invalid_email">Must be a valid email</string>
+    <string name="error_password_too_short">Must be at least 8 characters</string>
+    <string name="error_password_no_number">Must contain at least one number</string>
+    <string name="error_password_no_lowercase">Must contain a lowercase letter</string>
+    <string name="error_password_no_uppercase">Must contain an uppercase letter</string>
+    <string name="error_invalid_username">Must be between 3 and 20 characters</string>
+    <string name="error_password_mismatch">Passwords don\'t match</string>
 </resources>

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -46,8 +45,10 @@ fun NoteMarkPasswordTextField(
     state: TextFieldState,
     hint: String,
     title: String?,
+    error: String?,
     isPasswordVisible: Boolean,
     imeAction: ImeAction = ImeAction.Next,
+    additionalInfo: String? = null,
     onTogglePasswordVisibility: () -> Unit
 ) {
     var isFocused by remember {
@@ -68,6 +69,19 @@ fun NoteMarkPasswordTextField(
                     text = title,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            if (!error.isNullOrEmpty()) {
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            } else if (!additionalInfo.isNullOrEmpty()) {
+                Text(
+                    text = additionalInfo,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }

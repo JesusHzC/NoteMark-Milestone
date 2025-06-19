@@ -40,14 +40,29 @@ class LoginViewModel(
                 }
             }
             is LoginAction.OnValidateCredentials -> {
-                _state.update {
-                    it.copy(
-                        loginIsEnable = userDataValidator.isValidEmail(action.email) &&
-                                action.password.isNotEmpty()
-                    )
-                }
+                validateFields(
+                    action.email,
+                    action.password
+                )
             }
             else -> Unit
+        }
+    }
+
+    private fun validateFields(email: String, password: String) {
+        val isValidEmail = userDataValidator.isValidEmail(email)
+
+        val errorEmail = if (email.isBlank()) {
+            null
+        } else if (!isValidEmail) {
+            UiText.StringResource(R.string.error_invalid_email)
+        } else null
+
+        _state.update {
+            it.copy(
+                errorEmail = errorEmail,
+                loginIsEnable = isValidEmail && password.isNotBlank()
+            )
         }
     }
 
