@@ -1,6 +1,7 @@
 package com.jesushz.notemarkmilestone.note.presentation.note_list
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -63,14 +66,39 @@ private fun NoteListScreen(
     ) { innerPadding ->
         when {
             state.notes.isEmpty() -> {
-                EmptyNotes(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxWidth()
-                        .padding(
-                            top = 80.dp
+                when {
+                    state.isLoading -> {
+                        Box(
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxWidth()
+                                .padding(top = 80.dp)
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = androidx.compose.ui.Alignment.Center
+                        ) {
+                            LinearProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth(
+                                        fraction = if (isTablet() || isLandscape()) {
+                                            0.4f
+                                        } else {
+                                            0.6f
+                                        }
+                                    )
+                            )
+                        }
+                    }
+                    else -> {
+                        EmptyNotes(
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxWidth()
+                                .padding(
+                                    top = 80.dp
+                                )
                         )
-                )
+                    }
+                }
             }
             else -> {
                 when {
@@ -110,7 +138,7 @@ private fun NoteListScreen(
                                 span = { GridItemSpan(columns) }
                             ) {
                                 if (state.isLoading && state.notes.isNotEmpty()) {
-                                    // Show loading indicator at the bottom
+                                    CircularProgressIndicator()
                                 }
                             }
                         }
@@ -144,7 +172,7 @@ private fun NoteListScreen(
                                 span = StaggeredGridItemSpan.FullLine
                             ) {
                                 if (state.isLoading && state.notes.isNotEmpty()) {
-                                    // Show loading indicator at the bottom
+                                    CircularProgressIndicator()
                                 }
                             }
                         }
