@@ -21,5 +21,7 @@ sealed interface NavigationRoute {
     // Screens Note
     @Serializable
     data object NoteList: NavigationRoute
+    @Serializable
+    data object UpsertNote: NavigationRoute
 
 }

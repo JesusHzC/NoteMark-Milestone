@@ -15,13 +15,19 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NoteListScreenRoot(
-    viewModel: NoteListViewModel = koinViewModel()
+    viewModel: NoteListViewModel = koinViewModel(),
+    onCreateNewNote: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     NoteListScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when (action) {
+                NoteListAction.OnNewNoteClick -> onCreateNewNote()
+                else -> viewModel.onAction(action)
+            }
+        }
     )
 }
 
@@ -32,6 +38,9 @@ private fun NoteListScreen(
 ) {
     NoteMarkScaffold(
         userInitials = state.userInitials,
+        onNewNoteClick = {
+            onAction(NoteListAction.OnNewNoteClick)
+        },
     ) { innerPadding ->
         when {
             state.notes.isEmpty() -> {

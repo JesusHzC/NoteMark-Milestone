@@ -10,6 +10,7 @@ import com.jesushz.notemarkmilestone.auth.presentation.intro.IntroScreenRoot
 import com.jesushz.notemarkmilestone.auth.presentation.login.LoginScreenRoot
 import com.jesushz.notemarkmilestone.auth.presentation.register.RegisterScreenRoot
 import com.jesushz.notemarkmilestone.note.presentation.note_list.NoteListScreenRoot
+import com.jesushz.notemarkmilestone.note.presentation.upsert_note.UpsertNoteScreenRoot
 
 @Composable
 fun NavigationRoot(
@@ -89,7 +90,19 @@ private fun NavGraphBuilder.noteGraph(
         startDestination = NavigationRoute.NoteList
     ) {
         composable<NavigationRoute.NoteList> {
-            NoteListScreenRoot()
+            NoteListScreenRoot(
+                onCreateNewNote = {
+                    navController.navigate(NavigationRoute.UpsertNote)
+                }
+            )
+        }
+
+        composable<NavigationRoute.UpsertNote> {
+            UpsertNoteScreenRoot(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

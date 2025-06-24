@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun NoteMarkScaffold(
     userInitials: String,
+    onNewNoteClick: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -18,7 +19,7 @@ fun NoteMarkScaffold(
         },
         floatingActionButton = {
             NoteMarkFloatingButton(
-                onButtonClick = {}
+                onButtonClick = onNewNoteClick
             )
         },
         containerColor = MaterialTheme.colorScheme.surface,
