@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jesushz.notemarkmilestone.core.domain.note.Note
+import com.jesushz.notemarkmilestone.core.util.toDayMonthFormat
 
 @Composable
 internal fun NoteItem(
@@ -31,7 +32,7 @@ internal fun NoteItem(
                 .padding(16.dp)
         ) {
             Text(
-                text = note.lastEditedAt,
+                text = note.lastEditedAt.toDayMonthFormat(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )

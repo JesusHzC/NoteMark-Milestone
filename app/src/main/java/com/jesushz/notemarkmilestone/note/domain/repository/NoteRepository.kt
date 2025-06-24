@@ -11,4 +11,9 @@ interface NoteRepository {
         pageSize: Int
     ): Result<List<Note>, DataError.Network>
 
+    suspend fun createNote(
+        title: String,
+        content: String
+    ): Result<Note, DataError.Network>
+
 }

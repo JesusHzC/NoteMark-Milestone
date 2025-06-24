@@ -7,5 +7,6 @@ object Constants {
     const val ENDPOINT_REGISTER = "/api/auth/register"
     const val ENDPOINT_REFRESH_TOKEN = "/api/auth/refresh"
     const val ENDPOINT_GET_NOTES = "/api/notes"
+    const val ENDPOINT_CREATE_NOTE = "/api/notes"
 
 }

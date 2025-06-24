@@ -42,4 +42,6 @@
     <string name="save_note">SAVE NOTE</string>
     <string name="note_title">Note Title</string>
     <string name="note_description">Note Description</string>
+    <string name="title_cannot_be_empty">Title cannot be empty</string>
+    <string name="description_cannot_be_empty">Description cannot be empty</string>
 </resources>

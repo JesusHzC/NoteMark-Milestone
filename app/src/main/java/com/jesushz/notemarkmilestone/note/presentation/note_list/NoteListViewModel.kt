@@ -18,13 +18,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NoteListViewModel(
     private val sessionStorage: SessionStorage,
     private val repository: NoteRepository
 ) : ViewModel() {
 
-    private var hasLoadedInitialData = false
+    var hasLoadedInitialData = false
 
     private var paginator: DefaultPaginator<Int, Note>? = null
 
@@ -80,7 +81,9 @@ class NoteListViewModel(
                 state.value.page + 1
             },
             onError = { error ->
-                _eventUi.send(NoteListEvent.ShowError(error.asUiText()))
+                withContext(Dispatchers.Main) {
+                    _eventUi.send(NoteListEvent.ShowError(error.asUiText()))
+                }
             },
             onSuccess = { items, newKey ->
                 _state.update {
