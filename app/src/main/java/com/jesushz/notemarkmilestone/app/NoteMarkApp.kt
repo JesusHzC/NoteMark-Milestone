@@ -4,6 +4,7 @@ import android.app.Application
 import com.jesushz.notemarkmilestone.BuildConfig
 import com.jesushz.notemarkmilestone.app.di.appModule
 import com.jesushz.notemarkmilestone.auth.di.authModule
+import com.jesushz.notemarkmilestone.core.database.di.databaseModule
 import com.jesushz.notemarkmilestone.core.di.coreModule
 import com.jesushz.notemarkmilestone.note.di.noteModule
 import org.koin.android.ext.koin.androidContext
@@ -25,7 +26,8 @@ class NoteMarkApp: Application() {
                 appModule,
                 coreModule,
                 authModule,
-                noteModule
+                noteModule,
+                databaseModule
             )
         }
     }
