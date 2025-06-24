@@ -1,8 +1,14 @@
 package com.jesushz.notemarkmilestone.note.presentation.note_list
 
+import com.jesushz.notemarkmilestone.core.domain.note.Note
+
 data class NoteListState(
     val user: String = "",
-    val notes: List<String> = emptyList(),
+    val notes: List<Note> = emptyList(),
+    val page: Int = 0,
+    val size: Int = 10,
+    val isLoading: Boolean = false,
+    val endReached: Boolean = false,
 ) {
     val userInitials: String
         get() = calculateInitials().uppercase()

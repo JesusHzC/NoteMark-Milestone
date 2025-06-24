@@ -3,6 +3,13 @@ package com.jesushz.notemarkmilestone.note.presentation.note_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jesushz.notemarkmilestone.core.domain.auth.SessionStorage
+import com.jesushz.notemarkmilestone.core.domain.networking.DataError
+import com.jesushz.notemarkmilestone.core.domain.networking.Result
+import com.jesushz.notemarkmilestone.core.domain.note.Note
+import com.jesushz.notemarkmilestone.core.presentation.ui.asUiText
+import com.jesushz.notemarkmilestone.note.domain.DefaultPaginator
+import com.jesushz.notemarkmilestone.note.domain.repository.NoteRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,16 +20,19 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NoteListViewModel(
-    private val sessionStorage: SessionStorage
+    private val sessionStorage: SessionStorage,
+    private val repository: NoteRepository
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
+
+    private var paginator: DefaultPaginator<Int, Note>? = null
 
     private val _state = MutableStateFlow(NoteListState())
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
-                /** Load initial data here **/
+                loadNextPage()
                 hasLoadedInitialData = true
             }
         }
@@ -43,12 +53,56 @@ class NoteListViewModel(
                 )
             }
         }
+        initPaginator()
     }
 
     fun onAction(action: NoteListAction) {
         when (action) {
             else -> TODO("Handle actions")
         }
+    }
+
+    private fun initPaginator() {
+        paginator = DefaultPaginator(
+            initialKey = state.value.page,
+            onLoadUpdated = { isLoading ->
+                _state.update {
+                    it.copy(isLoading = isLoading)
+                }
+            },
+            onRequest = { nextPage ->
+                getNextPage(nextPage)
+            },
+            getNextKey = {
+                state.value.page + 1
+            },
+            onError = { error ->
+                _eventUi.send(NoteListEvent.ShowError(error.asUiText()))
+            },
+            onSuccess = { items, newKey ->
+                _state.update {
+                    it.copy(
+                        notes = it.notes + items,
+                        page = newKey,
+                        endReached = items.isEmpty()
+                    )
+                }
+            }
+        )
+    }
+
+    private fun loadNextPage() {
+        viewModelScope.launch(Dispatchers.IO) {
+            paginator?.loadNextItems()
+        }
+    }
+
+    private suspend fun getNextPage(nextPage: Int): Result<List<Note>, DataError.Network> {
+        val pageSize = state.value.size
+        return repository.getNotes(
+            page = nextPage,
+            pageSize = pageSize
+        )
     }
 
 }

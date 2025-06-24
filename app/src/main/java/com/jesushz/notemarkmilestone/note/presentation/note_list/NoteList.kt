@@ -53,6 +53,9 @@ private fun NoteListScreen(
                         )
                 )
             }
+            else -> {
+
+            }
         }
     }
 }
