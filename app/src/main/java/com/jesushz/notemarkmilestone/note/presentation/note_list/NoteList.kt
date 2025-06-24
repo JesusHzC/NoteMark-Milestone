@@ -1,11 +1,13 @@
 package com.jesushz.notemarkmilestone.note.presentation.note_list
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,6 +32,7 @@ import com.jesushz.notemarkmilestone.core.domain.note.Note
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.components.NoteMarkScaffold
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
+import com.jesushz.notemarkmilestone.core.presentation.ui.ObserveAsEvents
 import com.jesushz.notemarkmilestone.core.util.isLandscape
 import com.jesushz.notemarkmilestone.core.util.isTablet
 import com.jesushz.notemarkmilestone.note.presentation.note_list.components.EmptyNotes
@@ -40,7 +44,22 @@ fun NoteListScreenRoot(
     viewModel: NoteListViewModel = koinViewModel(),
     onCreateNewNote: () -> Unit
 ) {
+    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveAsEvents(
+        flow = viewModel.eventUi
+    ) { event ->
+        when (event) {
+            is NoteListEvent.ShowError -> {
+                Toast.makeText(
+                    context,
+                    event.error.asString(context),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
 
     NoteListScreen(
         state = state,
@@ -138,7 +157,11 @@ private fun NoteListScreen(
                                 span = { GridItemSpan(columns) }
                             ) {
                                 if (state.isLoading && state.notes.isNotEmpty()) {
-                                    CircularProgressIndicator()
+                                    CircularProgressIndicator(
+                                        strokeWidth = 3.dp,
+                                        modifier = Modifier
+                                            .requiredSize(24.dp)
+                                    )
                                 }
                             }
                         }
@@ -172,7 +195,11 @@ private fun NoteListScreen(
                                 span = StaggeredGridItemSpan.FullLine
                             ) {
                                 if (state.isLoading && state.notes.isNotEmpty()) {
-                                    CircularProgressIndicator()
+                                    CircularProgressIndicator(
+                                        strokeWidth = 3.dp,
+                                        modifier = Modifier
+                                            .requiredSize(24.dp)
+                                    )
                                 }
                             }
                         }
