@@ -1,5 +1,6 @@
-package com.jesushz.notemarkmilestone.core.data.auth
+package com.jesushz.notemarkmilestone.core.data.mappers
 
+import com.jesushz.notemarkmilestone.core.data.auth.AuthInfoSerializable
 import com.jesushz.notemarkmilestone.core.domain.auth.AuthInfo
 
 fun AuthInfo.toAuthInfoSerializable(): AuthInfoSerializable {

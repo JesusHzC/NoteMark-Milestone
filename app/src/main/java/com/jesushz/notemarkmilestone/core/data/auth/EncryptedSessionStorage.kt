@@ -1,6 +1,8 @@
 package com.jesushz.notemarkmilestone.core.data.auth
 
 import android.content.SharedPreferences
+import com.jesushz.notemarkmilestone.core.data.mappers.toAuthInfo
+import com.jesushz.notemarkmilestone.core.data.mappers.toAuthInfoSerializable
 import com.jesushz.notemarkmilestone.core.domain.auth.SessionStorage
 import com.jesushz.notemarkmilestone.core.domain.auth.AuthInfo
 import kotlinx.coroutines.Dispatchers
