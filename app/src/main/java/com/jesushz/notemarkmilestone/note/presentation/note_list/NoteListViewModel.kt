@@ -58,7 +58,10 @@ class NoteListViewModel(
 
     fun onAction(action: NoteListAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            NoteListAction.LoadNextPage -> {
+                loadNextPage()
+            }
+            else -> Unit
         }
     }
 
