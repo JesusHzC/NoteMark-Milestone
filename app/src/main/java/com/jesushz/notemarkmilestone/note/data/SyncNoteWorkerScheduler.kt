@@ -58,7 +58,8 @@ class SyncNoteWorkerScheduler(
         val userId = sessionStorage.get()?.username ?: return
         val pendingNote = NotePendingSyncEntity(
             note = note.toNoteEntity(),
-            userId = userId
+            userId = userId,
+            isUpdate = isUpdate
         )
         notePendingDao.upsertNotePendingSyncEntity(pendingNote)
 

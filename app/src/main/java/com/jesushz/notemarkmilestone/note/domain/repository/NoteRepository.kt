@@ -17,6 +17,6 @@ interface NoteRepository {
     suspend fun upsertNote(note: Note, isUpdate: Boolean): EmptyDataResult<DataError>
     suspend fun deleteNote(id: NoteId)
     suspend fun deleteAllNotes()
-    suspend fun syncPendingNotes(): EmptyDataResult<DataError.Network>
+    suspend fun syncPendingNotes()
 
 }

@@ -14,7 +14,7 @@ import com.jesushz.notemarkmilestone.core.database.entity.NotePendingSyncEntity
         NotePendingSyncEntity::class,
         DeletedNoteSyncEntity::class
     ],
-    version = 1,
+    version = 2,
 )
 abstract class NoteMarkDatabase: RoomDatabase() {
 

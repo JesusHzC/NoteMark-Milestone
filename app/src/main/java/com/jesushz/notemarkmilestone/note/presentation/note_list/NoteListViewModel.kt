@@ -7,6 +7,7 @@ import com.jesushz.notemarkmilestone.core.domain.networking.DataError
 import com.jesushz.notemarkmilestone.core.domain.networking.Result
 import com.jesushz.notemarkmilestone.core.domain.note.Note
 import com.jesushz.notemarkmilestone.note.domain.DefaultPaginator
+import com.jesushz.notemarkmilestone.note.domain.SyncNoteScheduler
 import com.jesushz.notemarkmilestone.note.domain.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -19,10 +20,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.minutes
 
 class NoteListViewModel(
     private val sessionStorage: SessionStorage,
-    private val repository: NoteRepository
+    private val repository: NoteRepository,
+    private val syncNoteScheduler: SyncNoteScheduler
 ) : ViewModel() {
 
     var hasLoadedInitialData = false
@@ -47,6 +50,7 @@ class NoteListViewModel(
     val eventUi = _eventUi.receiveAsFlow()
 
     init {
+        initPaginator()
         viewModelScope.launch {
             _state.update {
                 it.copy(
@@ -64,7 +68,12 @@ class NoteListViewModel(
                 }
             }.launchIn(viewModelScope)
 
-        initPaginator()
+        viewModelScope.launch {
+            syncNoteScheduler.scheduleSync(
+                type = SyncNoteScheduler.SyncType.FetchNotes(30.minutes)
+            )
+            repository.syncPendingNotes()
+        }
     }
 
     fun onAction(action: NoteListAction) {

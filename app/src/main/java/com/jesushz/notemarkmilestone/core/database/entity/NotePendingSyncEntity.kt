@@ -9,7 +9,8 @@ data class NotePendingSyncEntity(
     @Embedded val note: NoteEntity,
     @PrimaryKey(autoGenerate = false)
     val noteId: String = note.id,
-    val userId: String
+    val userId: String,
+    val isUpdate: Boolean = false
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

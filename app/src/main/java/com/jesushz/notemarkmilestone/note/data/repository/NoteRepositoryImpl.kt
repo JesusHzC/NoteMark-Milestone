@@ -1,6 +1,8 @@
 package com.jesushz.notemarkmilestone.note.data.repository
 
 import com.jesushz.notemarkmilestone.core.database.dao.NotePendingSyncDao
+import com.jesushz.notemarkmilestone.core.database.mappers.toNote
+import com.jesushz.notemarkmilestone.core.domain.auth.SessionStorage
 import com.jesushz.notemarkmilestone.core.domain.networking.DataError
 import com.jesushz.notemarkmilestone.core.domain.networking.EmptyDataResult
 import com.jesushz.notemarkmilestone.core.domain.networking.Result
@@ -9,16 +11,22 @@ import com.jesushz.notemarkmilestone.core.domain.note.LocalNoteDataSource
 import com.jesushz.notemarkmilestone.core.domain.note.Note
 import com.jesushz.notemarkmilestone.core.domain.note.NoteId
 import com.jesushz.notemarkmilestone.note.domain.RemoteNoteDataSource
+import com.jesushz.notemarkmilestone.note.domain.SyncNoteScheduler
 import com.jesushz.notemarkmilestone.note.domain.repository.NoteRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NoteRepositoryImpl(
     private val applicationScope: CoroutineScope,
     private val remoteDataSource: RemoteNoteDataSource,
     private val localDataSource: LocalNoteDataSource,
-    private val notePendingSyncDao: NotePendingSyncDao
+    private val notePendingSyncDao: NotePendingSyncDao,
+    private val syncNoteScheduler: SyncNoteScheduler,
+    private val sessionStorage: SessionStorage
 ): NoteRepository {
 
     override fun getNotesLocalSync(): Flow<List<Note>> {
@@ -67,7 +75,14 @@ class NoteRepositoryImpl(
                 }.await()
             }
             is Result.Error -> {
-                // TODO: SCHEDULE SYNC
+                applicationScope.launch {
+                    syncNoteScheduler.scheduleSync(
+                        type = SyncNoteScheduler.SyncType.UpsertNote(
+                            note = noteWithId,
+                            isUpdate = isUpdate
+                        )
+                    )
+                }.join()
                 Result.Success(Unit)
             }
         }
@@ -85,8 +100,13 @@ class NoteRepositoryImpl(
         val remoteResult = applicationScope.async {
             remoteDataSource.deleteNote(id)
         }.await()
+
         if (remoteResult is Result.Error) {
-            // TODO: SCHEDULE DELETE SYNC
+            applicationScope.launch {
+                syncNoteScheduler.scheduleSync(
+                    type = SyncNoteScheduler.SyncType.DeleteNote(id)
+                )
+            }.join()
         }
     }
 
@@ -94,9 +114,56 @@ class NoteRepositoryImpl(
         localDataSource.deleteAllNotes()
     }
 
-    override suspend fun syncPendingNotes(): EmptyDataResult<DataError.Network> {
-        // TODO("Not yet implemented")
-        return Result.Success(Unit)
+    override suspend fun syncPendingNotes() {
+        withContext(Dispatchers.IO) {
+            val userId = sessionStorage.get()?.username ?: return@withContext
+
+            val createNotes = async {
+                notePendingSyncDao.getAllNotePendingSyncEntities(userId)
+            }
+            val deleteNotes = async {
+                notePendingSyncDao.getAllDeletedNoteSyncEntities(userId)
+            }
+
+            val createJobs = createNotes
+                .await()
+                .map {
+                    launch {
+                        val note = it.note.toNote()
+                        val result = if (it.isUpdate) {
+                            remoteDataSource.putNote(note)
+                        } else {
+                            remoteDataSource.postNote(note)
+                        }
+                        when (result) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    notePendingSyncDao.deleteNotePendingSyncEntity(it.noteId)
+                                }.join()
+                            }
+                        }
+                    }
+                }
+
+            val deleteJobs = deleteNotes
+                .await()
+                .map {
+                    launch {
+                        when (remoteDataSource.deleteNote(it.noteId)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    notePendingSyncDao.deleteDeletedNoteSyncEntity(it.noteId)
+                                }.join()
+                            }
+                        }
+                    }
+                }
+
+            createJobs.forEach { it.join() }
+            deleteJobs.forEach { it.join() }
+        }
     }
 
 }
