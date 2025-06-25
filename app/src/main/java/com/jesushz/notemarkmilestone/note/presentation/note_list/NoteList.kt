@@ -123,95 +123,43 @@ private fun NoteListScreen(
                 }
             }
             else -> {
-                when {
-                    isTablet() -> {
-                        val columns = if (isLandscape()) 3 else 2
-                        var noteMaxHeight by remember { mutableIntStateOf(0) }
-                        val noteMaxHeightDp = with(LocalDensity.current) { noteMaxHeight.toDp() }
-
-                        LazyVerticalGrid(
-                            modifier = Modifier
-                                .padding(innerPadding)
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            columns = GridCells.Fixed(columns),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            items(
-                                count = state.notes.size,
-                                key = { state.notes[it].id }
-                            ) { count ->
-                                val item = state.notes[count]
-                                if (count >= state.notes.size - 1 && !state.endReached && !state.isLoading) {
-                                    onAction(NoteListAction.LoadNextPage)
-                                }
-                                NoteItem(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .defaultMinSize(minHeight = noteMaxHeightDp)
-                                        .onSizeChanged { size ->
-                                            noteMaxHeight = maxOf(noteMaxHeight, size.height)
-                                        },
-                                    note = item,
-                                    onNoteClick = {
-                                        onAction(NoteListAction.OnNoteSelected(item))
-                                    }
-                                )
-                            }
-                            item(
-                                span = { GridItemSpan(columns) }
-                            ) {
-                                if (state.isLoading && state.page > 0 && state.notes.isNotEmpty()) {
-                                    CircularProgressIndicator(
-                                        strokeWidth = 3.dp,
-                                        modifier = Modifier
-                                            .requiredSize(24.dp)
-                                    )
-                                }
-                            }
+                val gridCells = if (isLandscape()) 3 else 2
+                LazyVerticalStaggeredGrid(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    columns = StaggeredGridCells.Fixed(gridCells),
+                    verticalItemSpacing = 16.dp,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(
+                        count = state.notes.size,
+                        key = { state.notes[it].id }
+                    ) { count ->
+                        val item = state.notes[count]
+                        if (count >= state.notes.size - 1 && !state.endReached && !state.isLoading) {
+                            onAction(NoteListAction.LoadNextPage)
                         }
-                    }
-                    else -> {
-                        val gridCells = if (isLandscape()) 3 else 2
-                        LazyVerticalStaggeredGrid(
+                        NoteItem(
                             modifier = Modifier
-                                .padding(innerPadding)
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            columns = StaggeredGridCells.Fixed(gridCells),
-                            verticalItemSpacing = 16.dp,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            items(
-                                count = state.notes.size,
-                                key = { state.notes[it].id }
-                            ) { count ->
-                                val item = state.notes[count]
-                                if (count >= state.notes.size - 1 && !state.endReached && !state.isLoading) {
-                                    onAction(NoteListAction.LoadNextPage)
-                                }
-                                NoteItem(
-                                    modifier = Modifier
-                                        .wrapContentHeight()
-                                        .fillMaxWidth(),
-                                    note = item,
-                                    onNoteClick = {
-                                        onAction(NoteListAction.OnNoteSelected(item))
-                                    }
-                                )
+                                .wrapContentHeight()
+                                .fillMaxWidth(),
+                            note = item,
+                            onNoteClick = {
+                                onAction(NoteListAction.OnNoteSelected(item))
                             }
-                            item(
-                                span = StaggeredGridItemSpan.FullLine
-                            ) {
-                                if (state.isLoading && state.page > 0 && state.notes.isNotEmpty()) {
-                                    CircularProgressIndicator(
-                                        strokeWidth = 3.dp,
-                                        modifier = Modifier
-                                            .requiredSize(24.dp)
-                                    )
-                                }
-                            }
+                        )
+                    }
+                    item(
+                        span = StaggeredGridItemSpan.FullLine
+                    ) {
+                        if (state.isLoading && state.page > 0 && state.notes.isNotEmpty()) {
+                            CircularProgressIndicator(
+                                strokeWidth = 3.dp,
+                                modifier = Modifier
+                                    .requiredSize(24.dp)
+                            )
                         }
                     }
                 }
