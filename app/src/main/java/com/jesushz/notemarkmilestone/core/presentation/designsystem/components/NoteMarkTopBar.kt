@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.SpaceG
 @Composable
 fun NoteMarkTopBar(
     userInitials: String,
+    scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     TopAppBar(
         title = {
@@ -59,6 +61,7 @@ fun NoteMarkTopBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
             titleContentColor = MaterialTheme.colorScheme.onSurface
-        )
+        ),
+        scrollBehavior = scrollBehavior
     )
 }
