@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.jesushz.notemarkmilestone.R
 import com.jesushz.notemarkmilestone.core.domain.note.Note
 import com.jesushz.notemarkmilestone.core.presentation.ui.UiText
+import com.jesushz.notemarkmilestone.core.util.toISO8601Duration
 import com.jesushz.notemarkmilestone.note.domain.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -69,7 +70,8 @@ class UpsertNoteViewModel(
                     it.copy(
                         noteToUpdate = it.noteToUpdate?.copy(
                             title = title,
-                            content = description
+                            content = description,
+                            lastEditedAt = System.currentTimeMillis().toISO8601Duration()
                         )
                     )
                 }

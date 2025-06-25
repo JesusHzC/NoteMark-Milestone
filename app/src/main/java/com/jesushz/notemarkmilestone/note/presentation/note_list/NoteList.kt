@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -192,7 +193,8 @@ private fun NoteListScreen(
                                 }
                                 NoteItem(
                                     modifier = Modifier
-                                        .wrapContentSize(),
+                                        .wrapContentHeight()
+                                        .fillMaxWidth(),
                                     note = item,
                                     onNoteClick = {
                                         onAction(NoteListAction.OnNoteSelected(item))
