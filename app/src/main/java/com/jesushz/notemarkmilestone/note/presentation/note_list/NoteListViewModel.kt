@@ -6,19 +6,19 @@ import com.jesushz.notemarkmilestone.core.domain.auth.SessionStorage
 import com.jesushz.notemarkmilestone.core.domain.networking.DataError
 import com.jesushz.notemarkmilestone.core.domain.networking.Result
 import com.jesushz.notemarkmilestone.core.domain.note.Note
-import com.jesushz.notemarkmilestone.core.presentation.ui.asUiText
 import com.jesushz.notemarkmilestone.note.domain.DefaultPaginator
 import com.jesushz.notemarkmilestone.note.domain.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class NoteListViewModel(
     private val sessionStorage: SessionStorage,
@@ -54,6 +54,16 @@ class NoteListViewModel(
                 )
             }
         }
+        repository
+            .getNotesLocalSync()
+            .onEach { notes ->
+                _state.update {
+                    it.copy(
+                        notes = notes
+                    )
+                }
+            }.launchIn(viewModelScope)
+
         initPaginator()
     }
 
@@ -80,15 +90,16 @@ class NoteListViewModel(
             getNextKey = {
                 state.value.page + 1
             },
-            onError = { error ->
-                withContext(Dispatchers.Main) {
-                    _eventUi.send(NoteListEvent.ShowError(error.asUiText()))
+            onError = {
+                _state.update {
+                    it.copy(
+                        endReached = true
+                    )
                 }
             },
             onSuccess = { items, newKey ->
                 _state.update {
                     it.copy(
-                        notes = it.notes + items,
                         page = newKey,
                         endReached = items.isEmpty()
                     )

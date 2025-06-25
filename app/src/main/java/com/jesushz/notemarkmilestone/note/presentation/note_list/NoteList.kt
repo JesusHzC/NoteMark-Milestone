@@ -156,7 +156,7 @@ private fun NoteListScreen(
                             item(
                                 span = { GridItemSpan(columns) }
                             ) {
-                                if (state.isLoading && state.notes.isNotEmpty()) {
+                                if (state.isLoading && state.page > 0 && state.notes.isNotEmpty()) {
                                     CircularProgressIndicator(
                                         strokeWidth = 3.dp,
                                         modifier = Modifier
@@ -194,7 +194,7 @@ private fun NoteListScreen(
                             item(
                                 span = StaggeredGridItemSpan.FullLine
                             ) {
-                                if (state.isLoading && state.notes.isNotEmpty()) {
+                                if (state.isLoading && state.page > 0 && state.notes.isNotEmpty()) {
                                     CircularProgressIndicator(
                                         strokeWidth = 3.dp,
                                         modifier = Modifier
