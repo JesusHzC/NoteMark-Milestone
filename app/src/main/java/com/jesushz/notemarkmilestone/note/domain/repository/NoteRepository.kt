@@ -14,7 +14,7 @@ interface NoteRepository {
         page: Int,
         pageSize: Int
     ): Result<List<Note>, DataError.Network>
-    suspend fun upsertNote(note: Note): EmptyDataResult<DataError>
+    suspend fun upsertNote(note: Note, isUpdate: Boolean): EmptyDataResult<DataError>
     suspend fun deleteNote(id: NoteId)
     suspend fun deleteAllNotes()
     suspend fun syncPendingNotes(): EmptyDataResult<DataError.Network>

@@ -43,16 +43,22 @@ class NoteRepositoryImpl(
         }
     }
 
-    override suspend fun upsertNote(note: Note): EmptyDataResult<DataError> {
+    override suspend fun upsertNote(note: Note, isUpdate: Boolean): EmptyDataResult<DataError> {
         val localResult = localDataSource.upsertNote(note)
         if (localResult !is Result.Success) {
             return localResult.asEmptyDataResult()
         }
 
         val noteWithId = note.copy(id = localResult.data)
-        val remoteResult = remoteDataSource.postNote(
-            note = noteWithId
-        )
+        val remoteResult = if (isUpdate) {
+            remoteDataSource.putNote(
+                note = noteWithId
+            )
+        } else {
+            remoteDataSource.postNote(
+                note = noteWithId
+            )
+        }
 
         return when (remoteResult) {
             is Result.Success -> {

@@ -11,5 +11,6 @@ interface RemoteNoteDataSource {
         pageSize: Int
     ): Result<List<Note>, DataError.Network>
     suspend fun postNote(note: Note): Result<Note, DataError.Network>
+    suspend fun putNote(note: Note): Result<Note, DataError.Network>
     suspend fun deleteNote(id: String): EmptyDataResult<DataError.Network>
 }

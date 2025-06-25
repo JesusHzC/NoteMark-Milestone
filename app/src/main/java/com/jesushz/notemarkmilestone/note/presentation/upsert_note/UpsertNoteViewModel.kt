@@ -64,14 +64,23 @@ class UpsertNoteViewModel(
     private fun upsertNote(title: String, description: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val noteToUpdate = state.value.noteToUpdate
-            val note = noteToUpdate?.copy(
-                title = title,
-                content = description
-            ) ?: Note(
+            val note = if (noteToUpdate != null) {
+                _state.update {
+                    it.copy(
+                        noteToUpdate = it.noteToUpdate?.copy(
+                            title = title,
+                            content = description
+                        )
+                    )
+                }
+                state.value.noteToUpdate!!
+            } else {
+                Note(
                     title = title,
                     content = description
                 )
-            repository.upsertNote(note)
+            }
+            repository.upsertNote(note, noteToUpdate != null)
             _eventUi.send(UpsertNoteEvent.OnNoteSaved)
         }
     }

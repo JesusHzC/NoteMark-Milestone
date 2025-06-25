@@ -3,6 +3,7 @@ package com.jesushz.notemarkmilestone.note.data
 import com.jesushz.notemarkmilestone.core.data.networking.delete
 import com.jesushz.notemarkmilestone.core.data.networking.get
 import com.jesushz.notemarkmilestone.core.data.networking.post
+import com.jesushz.notemarkmilestone.core.data.networking.put
 import com.jesushz.notemarkmilestone.core.domain.networking.DataError
 import com.jesushz.notemarkmilestone.core.domain.networking.EmptyDataResult
 import com.jesushz.notemarkmilestone.core.domain.networking.Result
@@ -38,6 +39,13 @@ class KtorRemoteNoteDataSource(
 
     override suspend fun postNote(note: Note): Result<Note, DataError.Network> {
         return httpClient.post<NoteSerializable, NoteSerializable>(
+            route = ENDPOINT_NOTES,
+            body = note.toNoteSerializable()
+        ).map { it.toNote() }
+    }
+
+    override suspend fun putNote(note: Note): Result<Note, DataError.Network> {
+        return httpClient.put<NoteSerializable, NoteSerializable>(
             route = ENDPOINT_NOTES,
             body = note.toNoteSerializable()
         ).map { it.toNote() }
