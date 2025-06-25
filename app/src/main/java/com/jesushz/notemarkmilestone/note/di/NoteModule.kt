@@ -1,6 +1,8 @@
 package com.jesushz.notemarkmilestone.note.di
 
+import com.jesushz.notemarkmilestone.note.data.KtorRemoteNoteDataSource
 import com.jesushz.notemarkmilestone.note.data.repository.NoteRepositoryImpl
+import com.jesushz.notemarkmilestone.note.domain.RemoteNoteDataSource
 import com.jesushz.notemarkmilestone.note.domain.repository.NoteRepository
 import com.jesushz.notemarkmilestone.note.presentation.note_list.NoteListViewModel
 import com.jesushz.notemarkmilestone.note.presentation.upsert_note.UpsertNoteViewModel
@@ -14,4 +16,5 @@ val noteModule = module {
     viewModelOf(::UpsertNoteViewModel)
 
     singleOf(::NoteRepositoryImpl).bind<NoteRepository>()
+    singleOf(::KtorRemoteNoteDataSource).bind<RemoteNoteDataSource>()
 }

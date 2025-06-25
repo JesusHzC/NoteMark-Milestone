@@ -105,7 +105,7 @@ class NoteListViewModel(
 
     private suspend fun getNextPage(nextPage: Int): Result<List<Note>, DataError.Network> {
         val pageSize = state.value.size
-        return repository.getNotes(
+        return repository.getNotesRemoteSync(
             page = nextPage,
             pageSize = pageSize
         )

@@ -5,5 +5,5 @@ import com.jesushz.notemarkmilestone.core.presentation.ui.UiText
 
 sealed interface UpsertNoteEvent {
     data class ShowError(val error: UiText): UpsertNoteEvent
-    data class OnNoteSaved(val note: Note): UpsertNoteEvent
+    data object OnNoteSaved: UpsertNoteEvent
 }

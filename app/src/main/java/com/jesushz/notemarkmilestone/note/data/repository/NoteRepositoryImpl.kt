@@ -1,59 +1,96 @@
-@file:OptIn(ExperimentalUuidApi::class)
-
 package com.jesushz.notemarkmilestone.note.data.repository
 
-import com.jesushz.notemarkmilestone.core.data.networking.get
-import com.jesushz.notemarkmilestone.core.data.networking.post
+import com.jesushz.notemarkmilestone.core.database.dao.NotePendingSyncDao
 import com.jesushz.notemarkmilestone.core.domain.networking.DataError
+import com.jesushz.notemarkmilestone.core.domain.networking.EmptyDataResult
 import com.jesushz.notemarkmilestone.core.domain.networking.Result
-import com.jesushz.notemarkmilestone.core.domain.networking.map
+import com.jesushz.notemarkmilestone.core.domain.networking.asEmptyDataResult
+import com.jesushz.notemarkmilestone.core.domain.note.LocalNoteDataSource
 import com.jesushz.notemarkmilestone.core.domain.note.Note
-import com.jesushz.notemarkmilestone.core.util.Constants.ENDPOINT_CREATE_NOTE
-import com.jesushz.notemarkmilestone.core.util.Constants.ENDPOINT_GET_NOTES
-import com.jesushz.notemarkmilestone.core.util.toISO8601Duration
-import com.jesushz.notemarkmilestone.note.data.mappers.toNote
-import com.jesushz.notemarkmilestone.note.data.model.NoteSerializable
-import com.jesushz.notemarkmilestone.note.data.model.NotesResponse
+import com.jesushz.notemarkmilestone.core.domain.note.NoteId
+import com.jesushz.notemarkmilestone.note.domain.RemoteNoteDataSource
 import com.jesushz.notemarkmilestone.note.domain.repository.NoteRepository
-import io.ktor.client.HttpClient
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 
 class NoteRepositoryImpl(
-    private val httpClient: HttpClient
+    private val applicationScope: CoroutineScope,
+    private val remoteDataSource: RemoteNoteDataSource,
+    private val localDataSource: LocalNoteDataSource,
+    private val notePendingSyncDao: NotePendingSyncDao
 ): NoteRepository {
 
-    override suspend fun getNotes(
+    override fun getNotesLocalSync(): Flow<List<Note>> {
+        return localDataSource.getNotes()
+    }
+
+    override suspend fun getNotesRemoteSync(
         page: Int,
         pageSize: Int
     ): Result<List<Note>, DataError.Network> {
-        return httpClient.get<NotesResponse>(
-            route = ENDPOINT_GET_NOTES,
-            queryParameters = mapOf(
-                "page" to page,
-                "size" to pageSize
-            )
-        ).map {
-            it.notes.map { it.toNote() }
+        val result = remoteDataSource.getNotes(page, pageSize)
+        return when (result) {
+            is Result.Success -> {
+                applicationScope.async {
+                    localDataSource.upsertNotes(result.data).asEmptyDataResult()
+                }.await()
+                Result.Success(result.data)
+            }
+            is Result.Error -> {
+                result
+            }
         }
     }
 
-    override suspend fun createNote(
-        title: String,
-        content: String
-    ): Result<Note, DataError.Network> {
-        val note = NoteSerializable(
-            id = Uuid.random().toString(),
-            title = title,
-            content = content,
-            createdAt = System.currentTimeMillis().toISO8601Duration(),
-            lastEditedAt = System.currentTimeMillis().toISO8601Duration()
+    override suspend fun upsertNote(note: Note): EmptyDataResult<DataError> {
+        val localResult = localDataSource.upsertNote(note)
+        if (localResult !is Result.Success) {
+            return localResult.asEmptyDataResult()
+        }
+
+        val noteWithId = note.copy(id = localResult.data)
+        val remoteResult = remoteDataSource.postNote(
+            note = noteWithId
         )
 
-        return httpClient.post<NoteSerializable, NoteSerializable>(
-            route = ENDPOINT_CREATE_NOTE,
-            body = note
-        ).map { it.toNote() }
+        return when (remoteResult) {
+            is Result.Success -> {
+                applicationScope.async {
+                    localDataSource.upsertNote(remoteResult.data).asEmptyDataResult()
+                }.await()
+            }
+            is Result.Error -> {
+                // TODO: SCHEDULE SYNC
+                Result.Success(Unit)
+            }
+        }
+    }
+
+    override suspend fun deleteNote(id: NoteId) {
+        localDataSource.deleteNote(id)
+
+        val isPendingSync = notePendingSyncDao.getNotePendingSyncEntity(id) != null
+        if (isPendingSync) {
+            notePendingSyncDao.deleteNotePendingSyncEntity(id)
+            return
+        }
+
+        val remoteResult = applicationScope.async {
+            remoteDataSource.deleteNote(id)
+        }.await()
+        if (remoteResult is Result.Error) {
+            // TODO: SCHEDULE DELETE SYNC
+        }
+    }
+
+    override suspend fun deleteAllNotes() {
+        localDataSource.deleteAllNotes()
+    }
+
+    override suspend fun syncPendingNotes(): EmptyDataResult<DataError.Network> {
+        // TODO("Not yet implemented")
+        return Result.Success(Unit)
     }
 
 }
