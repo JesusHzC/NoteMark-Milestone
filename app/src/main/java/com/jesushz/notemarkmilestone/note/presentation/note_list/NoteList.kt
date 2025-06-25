@@ -42,7 +42,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun NoteListScreenRoot(
     viewModel: NoteListViewModel = koinViewModel(),
-    onCreateNewNote: () -> Unit
+    onCreateNewNote: () -> Unit,
+    onNoteSelected: (Note) -> Unit,
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -66,6 +67,7 @@ fun NoteListScreenRoot(
         onAction = { action ->
             when (action) {
                 NoteListAction.OnNewNoteClick -> onCreateNewNote()
+                is NoteListAction.OnNoteSelected -> onNoteSelected(action.note)
                 else -> viewModel.onAction(action)
             }
         }
@@ -150,7 +152,10 @@ private fun NoteListScreen(
                                         .onSizeChanged { size ->
                                             noteMaxHeight = maxOf(noteMaxHeight, size.height)
                                         },
-                                    note = item
+                                    note = item,
+                                    onNoteClick = {
+                                        onAction(NoteListAction.OnNoteSelected(item))
+                                    }
                                 )
                             }
                             item(
@@ -188,7 +193,10 @@ private fun NoteListScreen(
                                 NoteItem(
                                     modifier = Modifier
                                         .wrapContentSize(),
-                                    note = item
+                                    note = item,
+                                    onNoteClick = {
+                                        onAction(NoteListAction.OnNoteSelected(item))
+                                    }
                                 )
                             }
                             item(

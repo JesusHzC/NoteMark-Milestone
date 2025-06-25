@@ -6,11 +6,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.jesushz.notemarkmilestone.auth.presentation.intro.IntroScreenRoot
 import com.jesushz.notemarkmilestone.auth.presentation.login.LoginScreenRoot
 import com.jesushz.notemarkmilestone.auth.presentation.register.RegisterScreenRoot
+import com.jesushz.notemarkmilestone.core.data.mappers.toNote
+import com.jesushz.notemarkmilestone.core.data.mappers.toNoteNavigation
+import com.jesushz.notemarkmilestone.core.domain.note.NoteNavigation
 import com.jesushz.notemarkmilestone.note.presentation.note_list.NoteListScreenRoot
 import com.jesushz.notemarkmilestone.note.presentation.upsert_note.UpsertNoteScreenRoot
+import kotlin.reflect.typeOf
 
 @Composable
 fun NavigationRoot(
@@ -92,13 +97,22 @@ private fun NavGraphBuilder.noteGraph(
         composable<NavigationRoute.NoteList> {
             NoteListScreenRoot(
                 onCreateNewNote = {
-                    navController.navigate(NavigationRoute.UpsertNote)
+                    navController.navigate(NavigationRoute.UpsertNote(note = null))
+                },
+                onNoteSelected = { note ->
+                    navController.navigate(NavigationRoute.UpsertNote(note = note.toNoteNavigation()))
                 }
             )
         }
 
-        composable<NavigationRoute.UpsertNote> {
+        composable<NavigationRoute.UpsertNote>(
+            typeMap = mapOf(
+                typeOf<NoteNavigation?>() to NoteNavType.NoteType
+            )
+        ) {
+            val noteNavigation: NoteNavigation? = it.toRoute<NavigationRoute.UpsertNote>().note
             UpsertNoteScreenRoot(
+                noteToUpdate = noteNavigation?.toNote(),
                 onNavigateBack = {
                     navController.navigateUp()
                 }

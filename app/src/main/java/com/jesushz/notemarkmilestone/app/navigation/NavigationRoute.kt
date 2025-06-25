@@ -1,5 +1,6 @@
 package com.jesushz.notemarkmilestone.app.navigation
 
+import com.jesushz.notemarkmilestone.core.domain.note.NoteNavigation
 import kotlinx.serialization.Serializable
 
 sealed interface NavigationRoute {
@@ -22,6 +23,6 @@ sealed interface NavigationRoute {
     @Serializable
     data object NoteList: NavigationRoute
     @Serializable
-    data object UpsertNote: NavigationRoute
+    data class UpsertNote(val note: NoteNavigation?): NavigationRoute
 
 }

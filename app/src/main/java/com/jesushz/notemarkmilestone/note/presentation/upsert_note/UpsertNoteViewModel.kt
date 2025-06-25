@@ -1,5 +1,6 @@
 package com.jesushz.notemarkmilestone.note.presentation.upsert_note
 
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jesushz.notemarkmilestone.R
@@ -11,6 +12,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UpsertNoteViewModel(
@@ -25,6 +27,16 @@ class UpsertNoteViewModel(
 
     fun onAction(action: UpsertNoteAction) {
         when (action) {
+            is UpsertNoteAction.OnLoadNote -> {
+                val note = action.note
+                _state.update {
+                    it.copy(
+                        noteToUpdate = note,
+                        title = TextFieldState(note.title),
+                        description = TextFieldState(note.content)
+                    )
+                }
+            }
             UpsertNoteAction.OnSaveClick -> {
                 val title = state.value.title.text.toString()
                 val description = state.value.description.text.toString()
@@ -43,18 +55,22 @@ class UpsertNoteViewModel(
                     return
                 }
 
-                createNote(title, description)
+                upsertNote(title, description)
             }
             else -> Unit
         }
     }
 
-    private fun createNote(title: String, description: String) {
+    private fun upsertNote(title: String, description: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val note = Note(
+            val noteToUpdate = state.value.noteToUpdate
+            val note = noteToUpdate?.copy(
                 title = title,
                 content = description
-            )
+            ) ?: Note(
+                    title = title,
+                    content = description
+                )
             repository.upsertNote(note)
             _eventUi.send(UpsertNoteEvent.OnNoteSaved)
         }

@@ -19,13 +19,15 @@ import com.jesushz.notemarkmilestone.core.util.toDayMonthFormat
 internal fun NoteItem(
     modifier: Modifier = Modifier,
     note: Note,
+    onNoteClick: () -> Unit
 ) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-        )
+        ),
+        onClick = onNoteClick
     ) {
         Column(
             modifier = Modifier

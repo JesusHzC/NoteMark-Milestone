@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jesushz.notemarkmilestone.R
+import com.jesushz.notemarkmilestone.core.domain.note.Note
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMarkMilestoneTheme
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.SpaceGrotesk
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
@@ -39,10 +41,17 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun UpsertNoteScreenRoot(
     viewModel: UpsertNoteViewModel = koinViewModel(),
+    noteToUpdate: Note? = null,
     onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(noteToUpdate) {
+        if (noteToUpdate != null) {
+            viewModel.onAction(UpsertNoteAction.OnLoadNote(noteToUpdate))
+        }
+    }
 
     ObserveAsEvents(
         flow = viewModel.eventUi
