@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,7 @@ fun UpsertNoteScreenRoot(
     onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
+    val keyboard = LocalSoftwareKeyboardController.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(noteToUpdate) {
@@ -80,8 +82,13 @@ fun UpsertNoteScreenRoot(
                     viewModel.onAction(UpsertNoteAction.OnDialogDismiss)
                     onNavigateBack()
                 }
-                else -> viewModel.onAction(action)
+                UpsertNoteAction.OnCloseClick -> {
+                    keyboard?.hide()
+                    viewModel.onAction(action)
+                }
+                else -> Unit
             }
+            viewModel.onAction(action)
         }
     )
 }
