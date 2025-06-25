@@ -1,6 +1,7 @@
 package com.jesushz.notemarkmilestone.note.presentation.upsert_note
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.NoteMa
 import com.jesushz.notemarkmilestone.core.presentation.designsystem.theme.SpaceGrotesk
 import com.jesushz.notemarkmilestone.core.presentation.ui.NoteMarkPreview
 import com.jesushz.notemarkmilestone.core.presentation.ui.ObserveAsEvents
+import com.jesushz.notemarkmilestone.note.presentation.upsert_note.components.DialogExitNote
 import com.jesushz.notemarkmilestone.note.presentation.upsert_note.components.NoteDescriptionTextField
 import com.jesushz.notemarkmilestone.note.presentation.upsert_note.components.NoteTitleTextField
 import org.koin.androidx.compose.koinViewModel
@@ -74,7 +76,10 @@ fun UpsertNoteScreenRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                UpsertNoteAction.OnCloseClick -> onNavigateBack()
+                UpsertNoteAction.OnDialogAccept -> {
+                    viewModel.onAction(UpsertNoteAction.OnDialogDismiss)
+                    onNavigateBack()
+                }
                 else -> viewModel.onAction(action)
             }
         }
@@ -86,6 +91,18 @@ private fun UpsertNoteScreen(
     state: UpsertNoteState,
     onAction: (UpsertNoteAction) -> Unit,
 ) {
+    BackHandler {
+        onAction(UpsertNoteAction.OnCloseClick)
+    }
+    DialogExitNote(
+        showDialog = state.showExitDialog,
+        onAcceptClick = {
+            onAction(UpsertNoteAction.OnDialogAccept)
+        },
+        onCancelClick = {
+            onAction(UpsertNoteAction.OnDialogDismiss)
+        }
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()

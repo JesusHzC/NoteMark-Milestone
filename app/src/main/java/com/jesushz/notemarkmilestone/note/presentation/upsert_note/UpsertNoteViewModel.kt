@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jesushz.notemarkmilestone.R
 import com.jesushz.notemarkmilestone.core.domain.note.Note
-import com.jesushz.notemarkmilestone.core.presentation.ui.UiText
+import com.jesushz.notemarkmilestone.core.presentation.ui.UiText.StringResource
 import com.jesushz.notemarkmilestone.core.util.toISO8601Duration
 import com.jesushz.notemarkmilestone.note.domain.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
@@ -44,19 +44,44 @@ class UpsertNoteViewModel(
 
                 if (title.isBlank()) {
                     viewModelScope.launch {
-                        _eventUi.send(UpsertNoteEvent.ShowError(UiText.StringResource(R.string.title_cannot_be_empty)))
+                        _eventUi.send(UpsertNoteEvent.ShowError(StringResource(R.string.title_cannot_be_empty)))
                     }
                     return
                 }
 
                 if (description.isBlank()) {
                     viewModelScope.launch {
-                        _eventUi.send(UpsertNoteEvent.ShowError(UiText.StringResource(R.string.description_cannot_be_empty)))
+                        _eventUi.send(UpsertNoteEvent.ShowError(StringResource(R.string.description_cannot_be_empty)))
                     }
                     return
                 }
 
                 upsertNote(title, description)
+            }
+            UpsertNoteAction.OnCloseClick -> {
+                val isUpdate = state.value.noteToUpdate != null
+                val title = state.value.title.text.toString()
+                val description = state.value.description.text.toString()
+
+                val shouldShowDialog = if (isUpdate) {
+                    val note = state.value.noteToUpdate!!
+                    title != note.title || description != note.content
+                } else {
+                    title.isNotBlank() || description.isNotBlank()
+                }
+
+                if (shouldShowDialog) {
+                    _state.update { it.copy(showExitDialog = true) }
+                } else {
+                    viewModelScope.launch {
+                        _eventUi.send(UpsertNoteEvent.OnNoteSaved)
+                    }
+                }
+            }
+            UpsertNoteAction.OnDialogDismiss -> {
+                _state.update {
+                    it.copy(showExitDialog = false)
+                }
             }
             else -> Unit
         }

@@ -8,5 +8,6 @@ data class UpsertNoteState(
     val paramTwo: List<String> = emptyList(),
     val title: TextFieldState = TextFieldState(),
     val description: TextFieldState = TextFieldState(),
-    val noteToUpdate: Note? = null
+    val noteToUpdate: Note? = null,
+    val showExitDialog: Boolean = false
 )
