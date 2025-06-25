@@ -26,8 +26,8 @@ class NoteRepositoryImpl(
     }
 
     override suspend fun getNotesRemoteSync(
-        page: Int,
-        pageSize: Int
+        page: Int?,
+        pageSize: Int?
     ): Result<List<Note>, DataError.Network> {
         val result = remoteDataSource.getNotes(page, pageSize)
         return when (result) {

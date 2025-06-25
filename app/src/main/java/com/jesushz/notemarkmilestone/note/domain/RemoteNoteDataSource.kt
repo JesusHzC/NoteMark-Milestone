@@ -7,8 +7,8 @@ import com.jesushz.notemarkmilestone.core.domain.note.Note
 
 interface RemoteNoteDataSource {
     suspend fun getNotes(
-        page: Int,
-        pageSize: Int
+        page: Int?,
+        pageSize: Int?
     ): Result<List<Note>, DataError.Network>
     suspend fun postNote(note: Note): Result<Note, DataError.Network>
     suspend fun putNote(note: Note): Result<Note, DataError.Network>

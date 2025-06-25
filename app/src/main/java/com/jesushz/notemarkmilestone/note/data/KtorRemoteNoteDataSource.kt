@@ -23,15 +23,19 @@ class KtorRemoteNoteDataSource(
 ): RemoteNoteDataSource {
 
     override suspend fun getNotes(
-        page: Int,
-        pageSize: Int
+        page: Int?,
+        pageSize: Int?
     ): Result<List<Note>, DataError.Network> {
         return httpClient.get<NotesResponse>(
             route = ENDPOINT_NOTES,
-            queryParameters = mapOf(
-                "page" to page,
-                "size" to pageSize
-            )
+            queryParameters = if (page != null && pageSize != null) {
+                mapOf(
+                    "page" to page,
+                    "size" to pageSize
+                )
+            } else {
+                emptyMap()
+            }
         ).map { response ->
             response.notes.map { it.toNote() }
         }
@@ -53,8 +57,7 @@ class KtorRemoteNoteDataSource(
 
     override suspend fun deleteNote(id: String): EmptyDataResult<DataError.Network> {
         return httpClient.delete(
-            route = ENDPOINT_NOTES,
-            queryParameters = mapOf("id" to id)
+            route = "$ENDPOINT_NOTES/$id",
         )
     }
 }

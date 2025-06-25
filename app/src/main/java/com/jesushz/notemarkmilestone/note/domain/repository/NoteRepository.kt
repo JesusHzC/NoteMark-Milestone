@@ -11,8 +11,8 @@ interface NoteRepository {
 
     fun getNotesLocalSync(): Flow<List<Note>>
     suspend fun getNotesRemoteSync(
-        page: Int,
-        pageSize: Int
+        page: Int?,
+        pageSize: Int?
     ): Result<List<Note>, DataError.Network>
     suspend fun upsertNote(note: Note, isUpdate: Boolean): EmptyDataResult<DataError>
     suspend fun deleteNote(id: NoteId)
