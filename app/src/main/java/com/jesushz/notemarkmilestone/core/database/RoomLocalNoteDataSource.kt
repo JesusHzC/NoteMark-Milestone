@@ -35,7 +35,18 @@ class RoomLocalNoteDataSource(
 
     override suspend fun upsertNotes(notes: List<Note>): Result<List<NoteId>, DataError.Local> {
         return try {
+            val savedNotes = noteDao.getAllNotes()
             val entities = notes.map { it.toNoteEntity() }
+
+            val entryIds = entities.map { it.id }.toSet()
+            val existingIds = savedNotes.map { it.id }.toSet()
+
+            val deleteIds = existingIds - entryIds
+
+            if (deleteIds.isNotEmpty()) {
+                noteDao.deleteNotes(deleteIds.toList())
+            }
+
             noteDao.upsertNotes(entities)
             Result.Success(entities.map { it.id })
         } catch (e: SQLiteFullException) {
