@@ -3,8 +3,6 @@ package com.jesushz.notemarkmilestone.note.presentation.note_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jesushz.notemarkmilestone.core.domain.auth.SessionStorage
-import com.jesushz.notemarkmilestone.core.domain.networking.DataError
-import com.jesushz.notemarkmilestone.core.domain.networking.Result
 import com.jesushz.notemarkmilestone.core.domain.note.Note
 import com.jesushz.notemarkmilestone.note.domain.DefaultPaginator
 import com.jesushz.notemarkmilestone.note.domain.SyncNoteScheduler
@@ -12,16 +10,12 @@ import com.jesushz.notemarkmilestone.note.domain.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.minutes
 
 class NoteListViewModel(
@@ -39,7 +33,6 @@ class NoteListViewModel(
     val eventUi = _eventUi.receiveAsFlow()
 
     init {
-        initPaginator()
         viewModelScope.launch {
             _state.update {
                 it.copy(
@@ -62,7 +55,7 @@ class NoteListViewModel(
                 type = SyncNoteScheduler.SyncType.FetchNotes(30.minutes)
             )
             repository.syncPendingNotes()
-            fetchNotes()
+            repository.getNotesRemoteSync(null, null)
         }
     }
 
@@ -80,65 +73,10 @@ class NoteListViewModel(
         }
     }
 
-    private fun initPaginator() {
-        paginator = DefaultPaginator(
-            initialKey = state.value.page,
-            onLoadUpdated = { isLoading ->
-                _state.update {
-                    it.copy(isLoading = isLoading)
-                }
-            },
-            onRequest = { nextPage ->
-                getNextPage(nextPage)
-            },
-            getNextKey = {
-                state.value.page + 1
-            },
-            onError = {
-                _state.update {
-                    it.copy(
-                        endReached = true
-                    )
-                }
-            },
-            onSuccess = { items, newKey ->
-                _state.update {
-                    it.copy(
-                        page = newKey,
-                        endReached = items.isEmpty()
-                    )
-                }
-            }
-        )
-    }
-
     private fun loadNextPage() {
         viewModelScope.launch(Dispatchers.IO) {
             paginator?.loadNextItems()
         }
-    }
-
-    private suspend fun fetchNotes() {
-        withContext(Dispatchers.IO) {
-            when (val result = repository.getNotesRemoteSync(null, null)) {
-                is Result.Error -> Unit
-                is Result.Success -> {
-                    _state.update {
-                        it.copy(
-                            notes = result.data
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun getNextPage(nextPage: Int): Result<List<Note>, DataError.Network> {
-        val pageSize = state.value.size
-        return repository.getNotesRemoteSync(
-            page = nextPage,
-            pageSize = pageSize
-        )
     }
 
 }

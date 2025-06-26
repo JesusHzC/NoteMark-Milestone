@@ -36,17 +36,16 @@ class NoteRepositoryImpl(
     override suspend fun getNotesRemoteSync(
         page: Int?,
         pageSize: Int?
-    ): Result<List<Note>, DataError.Network> {
+    ): EmptyDataResult<DataError> {
         val result = remoteDataSource.getNotes(page, pageSize)
         return when (result) {
             is Result.Success -> {
                 applicationScope.async {
                     localDataSource.upsertNotes(result.data).asEmptyDataResult()
                 }.await()
-                Result.Success(result.data)
             }
             is Result.Error -> {
-                result
+                result.asEmptyDataResult()
             }
         }
     }

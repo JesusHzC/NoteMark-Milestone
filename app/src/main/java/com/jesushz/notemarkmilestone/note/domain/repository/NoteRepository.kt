@@ -13,7 +13,7 @@ interface NoteRepository {
     suspend fun getNotesRemoteSync(
         page: Int?,
         pageSize: Int?
-    ): Result<List<Note>, DataError.Network>
+    ): EmptyDataResult<DataError>
     suspend fun upsertNote(note: Note, isUpdate: Boolean): EmptyDataResult<DataError>
     suspend fun deleteNote(id: NoteId)
     suspend fun deleteAllNotes()
