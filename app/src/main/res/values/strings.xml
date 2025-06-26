@@ -48,4 +48,6 @@
     <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?\nYour changes will not be saved.</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="more_options">More options</string>
+    <string name="delete">Delete</string>
 </resources>

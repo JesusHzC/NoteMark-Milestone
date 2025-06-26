@@ -148,6 +148,9 @@ private fun NoteListScreen(
                             note = item,
                             onNoteClick = {
                                 onAction(NoteListAction.OnNoteSelected(item))
+                            },
+                            onDeleteNote = {
+                                onAction(NoteListAction.OnDeleteNote(item.id))
                             }
                         )
                     }

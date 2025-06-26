@@ -81,6 +81,11 @@ class NoteListViewModel(
             NoteListAction.LoadNextPage -> {
                 loadNextPage()
             }
+            is NoteListAction.OnDeleteNote -> {
+                viewModelScope.launch {
+                    repository.deleteNote(action.noteId)
+                }
+            }
             else -> Unit
         }
     }
