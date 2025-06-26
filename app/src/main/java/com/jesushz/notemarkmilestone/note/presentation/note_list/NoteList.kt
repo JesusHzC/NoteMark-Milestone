@@ -138,9 +138,9 @@ private fun NoteListScreen(
                         key = { state.notes[it].id }
                     ) { count ->
                         val item = state.notes[count]
-                        if (count >= state.notes.size - 1 && !state.endReached && !state.isLoading) {
+                        /*if (count >= state.notes.size - 1 && !state.endReached && !state.isLoading) {
                             onAction(NoteListAction.LoadNextPage)
-                        }
+                        }*/
                         NoteItem(
                             modifier = Modifier
                                 .wrapContentHeight()
@@ -154,7 +154,7 @@ private fun NoteListScreen(
                             }
                         )
                     }
-                    if (state.isLoading && state.page > 0 && state.notes.isNotEmpty()) {
+                    /*if (state.isLoading && state.page > 0 && state.notes.isNotEmpty()) {
                         item(
                             span = StaggeredGridItemSpan.FullLine
                         ) {
@@ -164,7 +164,7 @@ private fun NoteListScreen(
                                     .requiredSize(24.dp)
                             )
                         }
-                    }
+                    }*/
                 }
             }
         }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.minutes
 
 class NoteListViewModel(
@@ -28,23 +30,10 @@ class NoteListViewModel(
     private val syncNoteScheduler: SyncNoteScheduler
 ) : ViewModel() {
 
-    var hasLoadedInitialData = false
-
     private var paginator: DefaultPaginator<Int, Note>? = null
 
     private val _state = MutableStateFlow(NoteListState())
-    val state = _state
-        .onStart {
-            if (!hasLoadedInitialData) {
-                loadNextPage()
-                hasLoadedInitialData = true
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = NoteListState()
-        )
+    val state = _state.asStateFlow()
 
     private val _eventUi = Channel<NoteListEvent>()
     val eventUi = _eventUi.receiveAsFlow()
@@ -73,6 +62,7 @@ class NoteListViewModel(
                 type = SyncNoteScheduler.SyncType.FetchNotes(30.minutes)
             )
             repository.syncPendingNotes()
+            fetchNotes()
         }
     }
 
@@ -125,6 +115,21 @@ class NoteListViewModel(
     private fun loadNextPage() {
         viewModelScope.launch(Dispatchers.IO) {
             paginator?.loadNextItems()
+        }
+    }
+
+    private suspend fun fetchNotes() {
+        withContext(Dispatchers.IO) {
+            when (val result = repository.getNotesRemoteSync(null, null)) {
+                is Result.Error -> Unit
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            notes = result.data
+                        )
+                    }
+                }
+            }
         }
     }
 
